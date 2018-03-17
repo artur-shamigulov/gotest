@@ -1,9 +1,9 @@
 import base64
 import os
 
-from cStringIO import StringIO
+from io import StringIO
 from zipfile import ZipFile, BadZipfile
-from HTMLParser import HTMLParser
+from html.parser import HTMLParser
 
 EMUS_PER_PIXEL = 9525
 IMAGE_SHEMA = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image'
@@ -27,13 +27,13 @@ class Image(object):
         tmp.close()
         stream_out = StringIO()
         os.system(WMF_PARSE_CALL)
-        base64.encode(open('out.wmf', 'rb'), stream_out)
+        stream_out.write(base64.encode(open('out.wmf', 'r').read()))
         stream_out.seek(0)
         return self.src_attr % (path[:-3], stream_out.read())
 
     def convert_img(self, path):
         stream = StringIO()
-        base64.encode(self.zf.open('word/' + path), stream)
+        stream.write(base64.b64encode(self.zf.open('word/' + path)))
         stream.seek(0)
         return self.src_attr % (path[:-3], stream.read())
 
@@ -56,7 +56,7 @@ class HeaderParser(HTMLParser):
 
     def __init__(self, data, *args, **kwargs):
         HTMLParser.__init__(self, *args, **kwargs)
-        self.feed(data)
+        self.feed(data.decode("utf-8"))
 
     def get_relationship_dict(self):
         return self.relationship_dict
@@ -106,14 +106,20 @@ class DocumentParser(HTMLParser):
     def handle_data(self, data):
         self.tempText += data
 
+    def handle_entityref(self, data):
+        if data == 'lt':
+            self.tempText += '<'
+        if data == 'gt':
+            self.tempText += '>'
 
-def get_question_list(file):
+
+def get_full_text(file):
     zf = ZipFile(file)
 
     header_parser = HeaderParser(zf.read('word/_rels/document.xml.rels'))
     relationship_dict = header_parser.get_relationship_dict()
 
     document_parser = DocumentParser(relationship_dict, zf)
-    document_parser.feed(zf.read('word/document.xml'))
+    document_parser.feed(zf.read('word/document.xml').decode("utf-8"))
 
-    open('out.html', 'w').write(document_parser.text)
+    return document_parser.text
