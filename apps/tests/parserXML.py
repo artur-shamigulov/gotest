@@ -91,6 +91,20 @@ class DocumentParser(HTMLParser):
             self.cur_image = Image(self.zf)
             self.set_image_attr('style', dict(attrs)['style'])
 
+        if tag == 'wp:extent':
+            self.cur_image = Image(self.zf)
+            style = 'width: %s; height: %s;' % (
+                int(dict(attrs)['cx']) / EMUS_PER_PIXEL,
+                int(dict(attrs)['cy']) / EMUS_PER_PIXEL
+            )
+            self.set_image_attr('style', style)
+
+        if tag == 'a:blip':
+            self.set_image_attr(
+                'path', self.relationship_dict[dict(attrs)['r:embed']]
+            )
+            self.text += self.cur_image.get_image()
+
         if tag == 'v:imagedata':
             self.set_image_attr(
                 'path', self.relationship_dict[dict(attrs)['r:id']]
