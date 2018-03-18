@@ -1,7 +1,7 @@
 import base64
 import os
 
-from io import StringIO
+from io import BytesIO
 from zipfile import ZipFile, BadZipfile
 from html.parser import HTMLParser
 
@@ -25,17 +25,17 @@ class Image(object):
         tmp = open('inp.wmf', 'wb')
         tmp.write(self.zf.read('word/' + path))
         tmp.close()
-        stream_out = StringIO()
+        stream_out = BytesIO()
         os.system(WMF_PARSE_CALL)
-        stream_out.write(base64.encode(open('out.wmf', 'r').read()))
+        base64.encode(open('out.wmf', 'rb'), stream_out)
         stream_out.seek(0)
-        return self.src_attr % (path[:-3], stream_out.read())
+        return self.src_attr % (path[:-3], stream_out.read().decode('unicode_escape'))
 
     def convert_img(self, path):
-        stream = StringIO()
-        stream.write(base64.b64encode(self.zf.open('word/' + path)))
+        stream = BytesIO()
+        base64.encode(self.zf.open('word/' + path), stream)
         stream.seek(0)
-        return self.src_attr % (path[:-3], stream.read())
+        return self.src_attr % (path[:-3], stream.read().decode('unicode_escape'))
 
     def get_image(self):
         if not self.image:

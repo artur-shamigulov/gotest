@@ -5,11 +5,12 @@ f = open('Shpory_matem.docx', 'rb')
 
 a = TestParser()
 a.feed(get_full_text(f))
-f = open('output.html')
+f = open('output.html', 'w')
 
-for question in a.current_question:
+f.write('<meta charset="utf-8">')
+for question in a.question_list:
     answers = ''
-    for answer in a.answers:
+    for answer in question['answers']:
         answers += '<li>%s</li>' % answer
 
     f.write(
