@@ -1,14 +1,14 @@
 from parserXML import get_full_text
-from parser import TestParser
+from parser import pasre_test_format
 
 f = open('Shpory_matem.docx', 'rb')
 
-a = TestParser()
-a.feed(get_full_text(f))
+question_list = pasre_test_format(get_full_text(f))
+
 f = open('output.html', 'w')
 
 f.write('<meta charset="utf-8">')
-for question in a.question_list:
+for question in question_list:
     answers = ''
     for answer in question['answers']:
         answers += '<li>%s</li>' % answer

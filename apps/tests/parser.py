@@ -43,3 +43,9 @@ class TestParser(HTMLParser):
 
     def handle_data(self, data):
         self.text += data
+
+
+def pasre_test_format(data):
+    test_parser = TestParser()
+    test_parser.feed(data)
+    return test_parser.question_list

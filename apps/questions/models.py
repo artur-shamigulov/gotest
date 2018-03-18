@@ -14,4 +14,4 @@ class Question(models.Model):
         verbose_name_plural = 'Вопросы'
 
     def __str__(self):
-        return self.text[20:]
+        return 'Вопрос #%s' % self.id

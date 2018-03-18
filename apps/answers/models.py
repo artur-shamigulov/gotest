@@ -14,4 +14,4 @@ class Answer(models.Model):
         verbose_name_plural = 'Ответы'
 
     def __str__(self):
-        return self.text[20:]
+        return self.text[:20]
