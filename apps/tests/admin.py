@@ -1,4 +1,7 @@
 from django.contrib import admin
+from django.utils.html import format_html
+from django.utils.safestring import mark_safe
+from django.urls import reverse_lazy
 
 from .models import Test
 from .forms import TestAdminForm
@@ -11,8 +14,20 @@ from answers.models import Answer
 class QuestionInline(admin.StackedInline):
     extra = 0
     model = Question
+    exclude = ('text',)
 
-    readonly_fields = ('text',)
+    readonly_fields = ('question_text',)
+
+    def question_text(self, instance):
+
+        return format_html(
+            mark_safe('<br>%s</br><a href="%s">Редактировать</a>' % (
+                instance.text,
+                str(reverse_lazy('admin:questions_question_change', args=(
+                    instance.id,)))
+            )),)
+
+    question_text.short_description = "Вопрос"
 
 
 class TestAdmin(admin.ModelAdmin):
