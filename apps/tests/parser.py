@@ -9,6 +9,7 @@ class TestParser(HTMLParser):
         self.question_list = []
         self.current_question = None
         self.text = ''
+        self.is_true = False
         HTMLParser.__init__(self, *args, **kwargs)
 
     def start_question(self):
@@ -27,13 +28,18 @@ class TestParser(HTMLParser):
 
         if tag == 'answer':
             self.text = ''
+            self.is_true = 'is_true' in dict(attrs)
 
     def handle_endtag(self, tag):
         if tag == "question":
             self.current_question['text'] = self.text
 
         if tag == "answer":
-            self.current_question['answers'].append(self.text)
+            self.current_question['answers'].append({
+                'text': self.text,
+                'is_true': self.is_true
+            })
+            self.is_true = False
 
     def handle_startendtag(self, tag, attrs):
         attrs = dict(attrs)

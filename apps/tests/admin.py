@@ -57,7 +57,10 @@ class TestAdmin(admin.ModelAdmin):
             answers = []
             for answer in question['answers']:
                 answers.append(
-                    Answer(text=answer, question=instance))
+                    Answer(
+                        text=answer['text'],
+                        is_true=answer['is_true'],
+                        question=instance))
             Answer.objects.bulk_create(answers)
 
 

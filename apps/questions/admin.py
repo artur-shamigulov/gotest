@@ -1,5 +1,5 @@
 from django.contrib import admin
-
+from django.urls import reverse_lazy
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 
@@ -17,9 +17,13 @@ class AnswerInline(admin.StackedInline):
     def answer_text(self, instance):
 
         return format_html(
-            mark_safe('<br>%s</br>' % instance.text),)
+            mark_safe('<br>%s</br><a href="%s">Редактировать</a>' % (
+                instance.text,
+                str(reverse_lazy('admin:answers_answer_change', args=(
+                    instance.id,)))
+            )),)
 
-    answer_text.short_description = "Вопрос"
+    answer_text.short_description = "Ответ"
 
 
 class QuestionAdmin(admin.ModelAdmin):

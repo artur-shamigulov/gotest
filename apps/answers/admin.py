@@ -1,3 +1,10 @@
 from django.contrib import admin
 
-# Register your models here.
+from answers.models import Answer
+
+
+class AnswerAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(Answer, AnswerAdmin)
