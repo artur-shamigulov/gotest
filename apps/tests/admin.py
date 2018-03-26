@@ -3,7 +3,8 @@ from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from django.urls import reverse_lazy
 
-from .models import Test
+from .models import (
+    Test, AppointedTest, AvailableTest)
 from .forms import TestAdminForm
 from .parserDoc import get_full_text
 from .parser import pasre_test_format
@@ -65,3 +66,17 @@ class TestAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Test, TestAdmin)
+
+
+class AppointedTestAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(AppointedTest, AppointedTestAdmin)
+
+
+class AvailableTestAdmin(admin.ModelAdmin):
+    pass
+
+
+admin.site.register(AvailableTest, AvailableTestAdmin)
