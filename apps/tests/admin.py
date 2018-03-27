@@ -5,7 +5,7 @@ from django.urls import reverse_lazy
 
 from .models import (
     Test, AppointedTest, AvailableTest)
-from .forms import TestAdminForm
+from .forms import TestAdminForm, ApointedTestFrom
 from .parserDoc import get_full_text
 from .parser import pasre_test_format
 from questions.models import Question
@@ -69,7 +69,11 @@ admin.site.register(Test, TestAdmin)
 
 
 class AppointedTestAdmin(admin.ModelAdmin):
-    pass
+
+    form = ApointedTestFrom
+
+    def get_form(self, *args, **kwargs):
+        return self.form
 
 
 admin.site.register(AppointedTest, AppointedTestAdmin)
