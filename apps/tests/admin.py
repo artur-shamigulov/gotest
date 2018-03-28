@@ -33,6 +33,8 @@ class QuestionInline(admin.StackedInline):
 
 class TestAdmin(admin.ModelAdmin):
 
+    search_fields = ['title']
+
     form = TestAdminForm
 
     prepopulated_fields = {"slug": ("title",)}
@@ -71,6 +73,8 @@ admin.site.register(Test, TestAdmin)
 class AppointedTestAdmin(admin.ModelAdmin):
 
     form = ApointedTestFrom
+
+    autocomplete_fields = ['tests']
 
     def get_form(self, *args, **kwargs):
         return self.form

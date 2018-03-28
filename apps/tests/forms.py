@@ -1,8 +1,11 @@
 from django import forms
+from django.contrib import admin
 from django.contrib.auth.models import User
 
 from .models import Test, AppointedTest, AvailableTest
 from groups.models import UserGroup
+
+from utils.widgets import CustomAutocompleteSelectMultiple, ReactiveFilteredSelectMultiple
 
 
 class TestAdminForm(forms.ModelForm):
@@ -18,18 +21,21 @@ class ApointedAvailableTestFrom(forms.ModelForm):
 
     groups = forms.ModelMultipleChoiceField(
         queryset=UserGroup.objects.all(),
-        label='Группа', required=False)
+        label='Группа', required=False,
+        widget=ReactiveFilteredSelectMultiple(verbose_name="Группы", is_stacked=False))
 
 
 class ApointedTestFrom(ApointedAvailableTestFrom):
 
     tests = forms.ModelMultipleChoiceField(
         queryset=Test.objects.all(),
-        label='Тест', required=False)
+        label='Тест', required=False,
+        widget=CustomAutocompleteSelectMultiple(Test, admin.site))
 
     users = forms.ModelMultipleChoiceField(
         queryset=User.objects.all(),
-        label='Пользователи', required=False)
+        label='Пользователи', required=False,
+        widget=CustomAutocompleteSelectMultiple(User, admin.site))
 
     def __init__(self, *args, **kwargs):
         users = kwargs['instance'].users.all()
