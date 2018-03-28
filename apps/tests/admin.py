@@ -74,8 +74,6 @@ class AppointedTestAdmin(admin.ModelAdmin):
 
     form = ApointedTestFrom
 
-    autocomplete_fields = ['tests']
-
     def get_form(self, *args, **kwargs):
         return self.form
 

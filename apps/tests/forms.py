@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.models import User
+from django.contrib.admin.widgets import AdminSplitDateTime
 
 from .models import Test, AppointedTest, AvailableTest
 from groups.models import UserGroup
@@ -70,3 +71,7 @@ class ApointedTestFrom(ApointedAvailableTestFrom):
             'title', 'groups', 'users',
             'tests', 'duration', 'datetime_start',
             'datetime_end')
+        widgets = {
+            'datetime_start': AdminSplitDateTime,
+            'datetime_end': AdminSplitDateTime
+        }
