@@ -18,13 +18,14 @@
             {% block css %}
                 <link href="{% static "utils/css/bootstrap.min.css" %}" rel="stylesheet">
                 <link href="{% static "main/css/base.css" %}" rel="stylesheet">
+                <link href="{% static "main/css/sidebar.css" %}" rel="stylesheet">
             {% endblock css %}
         {% endblock head %}
     </head>
     <body>
         {% block body %}
             {% block header %}
-                <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+                <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 bg-white border-bottom box-shadow">
                     <a class="navbar-brand mr-0 mr-md-2"><img class="d-block" src="{% static "main/img/gotest.png" %}" alt="" width="20" height="20"></a>
                     <h5 class="my-0 mr-md-auto font-weight-normal">
                         <a href="{% url 'main:main' %}">GoTest</a>
@@ -36,6 +37,33 @@
                     <a class="btn btn-outline-primary" href="{% url 'account:logout' %}">Выход</a>
                 </div>
             {% endblock header %}
+            {% block sidebar %}
+                <div class="container-fluid">
+                    <div class="row">
+                        <nav class="col-md-2 d-none d-md-block bg-light sidebar">
+                            <div class="sidebar-sticky">
+                                <ul class="nav flex-column">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" href="#">
+                                            Назначенные тесты
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">
+                                            Доступные тесты
+                                        </a>
+                                    </li>
+                                </ul>
+                                <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                                    <span>Текущие тесты</span>
+                                    <a class="d-flex align-items-center text-muted" href="#">
+                                    </a>
+                                </h6>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+            {% endblock sidebar %}
         {% endblock body %}
     </body>
 </html>
