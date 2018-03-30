@@ -1,23 +1,19 @@
+{% extends 'main/base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <link rel="icon" href="{% static "utils/img/favicon.ico" %}">
 
+{% block title %}
     <title>Вход в систему</title>
+{% endblock title %}
 
-    <link href="{% static "utils/css/bootstrap.min.css" %}" rel="stylesheet">
-
+{% block css %}
+    {{ block.super }}
     <link href="{% static "accounts/css/signin.css" %}" rel="stylesheet">
-  </head>
-
+{% endblock css %}
+{% block body %}
   <body class="text-center">
     <form class="form-signin" method="POST">
       {% csrf_token %}
-      <img class="mb-4" src="{% static "utils/img/gotest.png" %}" alt="" width="72" height="72">
+      <img class="mb-4" src="{% static "main/img/gotest.png" %}" alt="" width="72" height="72">
       <h1 class="h3 mb-3 font-weight-normal">Вход в систему</h1>
       <label for="username" class="sr-only">Имя пользователя</label>
       <input type="text" id="username" name="username" value="{{ form.field.username.value }}" class="form-control" placeholder="Имя пользователя" required="" autofocus="">
@@ -30,7 +26,4 @@
       </div>
       <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
     </form>
-
-  
-
-</body></html>
+{% endblock body %}

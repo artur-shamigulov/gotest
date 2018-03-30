@@ -1,0 +1,41 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% block head %}
+            {% block meta %}
+                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+                {% block meta_info %}
+                    <meta name="description" content="GoTest">
+                    <meta name="author" content="voidfirefly@gmailcom">
+                {% endblock meta_info %}
+            {% endblock meta %}
+            <link rel="icon" href="{% static "main/img/favicon.ico" %}">
+            {% block title %}
+                <title>GoTest</title>
+            {% endblock title %}
+            {% block css %}
+                <link href="{% static "utils/css/bootstrap.min.css" %}" rel="stylesheet">
+                <link href="{% static "main/css/base.css" %}" rel="stylesheet">
+            {% endblock css %}
+        {% endblock head %}
+    </head>
+    <body>
+        {% block body %}
+            {% block header %}
+                <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom box-shadow">
+                    <a class="navbar-brand mr-0 mr-md-2"><img class="d-block" src="{% static "main/img/gotest.png" %}" alt="" width="20" height="20"></a>
+                    <h5 class="my-0 mr-md-auto font-weight-normal">
+                        <a href="{% url 'main:main' %}">GoTest</a>
+                    </h5>
+                    
+                    <nav class="my-2 my-md-0 mr-md-3">
+                        <a class="p-2 text-dark" href="{% url 'admin:index' %}">Админ панель</a>
+                    </nav>
+                    <a class="btn btn-outline-primary" href="{% url 'account:logout' %}">Выход</a>
+                </div>
+            {% endblock header %}
+        {% endblock body %}
+    </body>
+</html>
