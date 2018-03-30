@@ -27,6 +27,6 @@ class ReactiveFilteredSelectMultiple(FilteredSelectMultiple):
             'SelectFilter2.js',
         ]
 
-        extra_js = ['utils/filtered_select_multiple.js']
+        extra_js = ['utils/js/filtered_select_multiple.js']
 
         return forms.Media(js=["admin/js/%s" % path for path in js] + extra_js)
