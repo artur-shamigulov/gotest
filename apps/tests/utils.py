@@ -4,24 +4,24 @@ from main.utils import SidebarBaseTabs, SidebarBaseNavs
 
 
 class SidebarTestTabs(SidebarBaseTabs):
-    _tabs_list = [
+    tabs_list = [
         {
             'title': 'Назначенные тесты',
             'name': 'appointed',
-            'url': '#',
+            'url': reverse_lazy('test:appointed'),
             'active': False
         },
         {
             'title': 'Доступные тесты',
             'name': 'available',
-            'url': '#',
+            'url': reverse_lazy('test:available'),
             'active': False
         }
     ]
 
 
 class SidebarTestNavs(SidebarBaseNavs):
-    _navs_list = [
+    navs_list = [
         {
             'title': 'Админ панель',
             'url': reverse_lazy('admin:index'),

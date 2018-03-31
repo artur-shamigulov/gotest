@@ -10,12 +10,12 @@ class SidebarBaseMixin(object):
 
     def tabs_list(self, **kwargs):
 
-        tabs = self.tabs_list_factory()
+        tabs = self.tabs_list_factory().get_tabs(self)
 
-        for tab in tabs.tabs_list(self):
+        for tab in tabs:
             if tab['name'] == self.active_tab:
                 tab['active'] = True
-        return tabs.tabs_list(self)
+        return tabs
 
 
 class NavBaseMixin(object):
@@ -24,4 +24,4 @@ class NavBaseMixin(object):
         return SidebarTestNavs(self)
 
     def navs_list(self, **kwargs):
-        return self.navs_list_factory().navs_list(self)
+        return self.navs_list_factory().get_navs(self)
