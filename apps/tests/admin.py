@@ -46,26 +46,27 @@ class TestAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         super(TestAdmin, self).save_model(request, obj, form, change)
-        obj.question_set.all().delete()
-        question_list = pasre_test_format(
-            get_full_text(
-                form.cleaned_data['file_field'].file
+        if form.cleaned_data.get('file_field'):
+            obj.question_set.all().delete()
+            question_list = pasre_test_format(
+                get_full_text(
+                    form.cleaned_data['file_field'].file
+                )
             )
-        )
 
-        for question in question_list:
-            instance = Question.objects.create(
-                test=obj,
-                text=question['text']
-            )
-            answers = []
-            for answer in question['answers']:
-                answers.append(
-                    Answer(
-                        text=answer['text'],
-                        is_true=answer['is_true'],
-                        question=instance))
-            Answer.objects.bulk_create(answers)
+            for question in question_list:
+                instance = Question.objects.create(
+                    test=obj,
+                    text=question['text']
+                )
+                answers = []
+                for answer in question['answers']:
+                    answers.append(
+                        Answer(
+                            text=answer['text'],
+                            is_true=answer['is_true'],
+                            question=instance))
+                Answer.objects.bulk_create(answers)
 
 
 admin.site.register(Test, TestAdmin)

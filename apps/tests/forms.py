@@ -11,7 +11,7 @@ from utils.widgets import CustomAutocompleteSelectMultiple, ReactiveFilteredSele
 
 class TestAdminForm(forms.ModelForm):
 
-    file_field = forms.FileField(label='Фаил теста:')
+    file_field = forms.FileField(label='Фаил теста:', required=False)
 
     class Meta:
         model = Test
