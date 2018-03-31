@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -26,6 +28,23 @@ class Test(models.Model):
         return self.title
 
 
+class AppointedTestQuerySet(models.QuerySet):
+
+    def future(self, **kwargs):
+        kwargs['datetime_end__gte'] = timezone.now()
+
+        return self.filter(**kwargs)
+
+
+class AppointedTestManager(models.Manager):
+
+    def future(self, **kwargs):
+        return self.get_queryset().future(**kwargs)
+
+    def get_queryset(self):
+        return AppointedTestQuerySet(self.model, using=self._db)
+
+
 class AppointedTest(models.Model):
 
     title = models.CharField(
@@ -36,9 +55,19 @@ class AppointedTest(models.Model):
     datetime_start = models.DateTimeField('Начало теста')
     datetime_end = models.DateTimeField('Окончание теста')
 
+    objects = AppointedTestManager()
+
     class Meta:
         verbose_name = 'Назначенный тест'
         verbose_name_plural = 'Назначенные тесты'
+
+    @property
+    def is_available(self):
+        now = timezone.now()
+
+        return (
+            self.datetime_start <= now and
+            self.datetime_end > now)
 
     def __str__(self):
         return '%s %s-%s' % (

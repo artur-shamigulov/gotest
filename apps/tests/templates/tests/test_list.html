@@ -3,41 +3,7 @@
 {% block body_content %}
 <h1>{{ view.title }}</h1>
 <div class="card-deck mb-3 text-center">
-    <div class="col-sm-12 col-sm-6 col-md-4 my-3">
-        <div class="card box-shadow">
-            <div class="card-body">
-                <h5 class="card-title">Special title treatment</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-12 col-sm-6 col-md-4 my-3">
-        <div class="card box-shadow">
-            <div class="card-body">
-                <h5 class="card-title">Special title treatment</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-12 col-sm-6 col-md-4 my-3">
-        <div class="card box-shadow">
-            <div class="card-body">
-                <h5 class="card-title">Special title treatment</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-12 col-sm-6 col-md-4 my-3">
-        <div class="card box-shadow">
-            <div class="card-body">
-                <h5 class="card-title">Special title treatment</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
-            </div>
-        </div>
-    </div>
+    {% block item_test  %}
+    {% endblock item_test  %}
 </div>
 {% endblock body_content %}

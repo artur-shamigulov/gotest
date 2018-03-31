@@ -1,0 +1,14 @@
+{% extends 'tests/test_list.html' %}
+{% block item_test  %}
+    {% for test in view.tests %}
+        <div class="col-sm-12 col-sm-6 col-md-4 my-3">
+            <div class="card box-shadow">
+                <div class="card-body">
+                    <h5 class="card-title">{{ test.title }}</h5>
+                    <p class="card-text">{{ test.description }}</p>
+                    <a href="#" class="btn btn-primary">Тренировка</a>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock item_test  %}

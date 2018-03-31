@@ -53,11 +53,6 @@ class ApointedAvailableTestFrom(forms.ModelForm):
 
 class ApointedTestFrom(ApointedAvailableTestFrom):
 
-    def __init__(self, *args, **kwargs):
-        users = kwargs['instance'].users.all()
-        users.values_list('id').annotate()
-        super(ApointedTestFrom, self).__init__(*args, **kwargs)
-
     def clean(self):
         data = super().clean()
         if data['datetime_start'] >= data['datetime_end']:
