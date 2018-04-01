@@ -1,4 +1,5 @@
 from django.utils import timezone
+from django.utils import cache
 
 from django.db import models
 from django.contrib.auth.models import User
@@ -27,6 +28,25 @@ class Test(models.Model):
     def __str__(self):
         return self.title
 
+    @staticmethod
+    def _get_test_name(uid):
+        return'test_%s' % uid
+
+    @staticmethod
+    def _get_test_contorller(id, uid, length):
+        return 
+
+    def start_test(self, user, duration):
+        test_log = TestLog.objects.create(
+            test=self, user=user)
+
+        cache.set(
+            self._get_test_name(test_log.test_uid),
+            self._get_test_structure(
+                self.id, test_log.test_uid),
+            timeout=self.duration)
+        return test_log
+
 
 class AppointedTestQuerySet(models.QuerySet):
 
@@ -52,6 +72,8 @@ class AppointedTest(models.Model):
     users = models.ManyToManyField(User, verbose_name='Пользователи')
     tests = models.ManyToManyField(Test, verbose_name='Тесты')
     duration = models.PositiveSmallIntegerField('Длительность', default=60)
+    test_size = models.PositiveSmallIntegerField(
+        'Количество вопросов', default=25, min_value=1)
     datetime_start = models.DateTimeField('Начало теста')
     datetime_end = models.DateTimeField('Окончание теста')
 
@@ -80,6 +102,8 @@ class AvailableTest(models.Model):
         'Заголовок', default='Доступный тест', max_length=255)
     users = models.ManyToManyField(User, verbose_name='Пользователи')
     tests = models.ManyToManyField(Test, verbose_name='Тесты')
+    test_size = models.PositiveSmallIntegerField(
+        'Количество вопросов', min_value=1, default=25)
 
     class Meta:
         verbose_name = 'Доступный тест'
@@ -87,3 +111,19 @@ class AvailableTest(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class TestLog(models.Model):
+    test_uid = models.UUIDField(verbose_name="Код теста")
+    test = models.ForeignKey(Test, verbose_name="Тест")
+    user = models.ForeignKey(User, verbose_name="Пользователь")
+    datetime_created = models.DateTimeField('Начало теста', auto_now_add=True)
+    datetime_completed = models.DateTimeField('Начало теста')
+    score = models.PositiveSmallIntegerField('Результат', default=0)
+
+    class Meta:
+        verbose_name = 'История тестов'
+        verbose_name_plural = 'Истории тестов'
+
+    def __str__(self):
+        return '%s %s %s' % self.test.title, self.user.username, self.score

@@ -69,7 +69,8 @@ class ApointedTestFrom(ApointedAvailableTestFrom):
         model = AppointedTest
         fields = (
             'title', 'groups', 'users',
-            'tests', 'duration', 'datetime_start',
+            'tests', 'duration', 'test_size',
+            'datetime_start',
             'datetime_end')
         widgets = {
             'datetime_start': AdminSplitDateTime,
@@ -83,4 +84,4 @@ class AvailableTestFrom(ApointedAvailableTestFrom):
         model = AppointedTest
         fields = (
             'title', 'groups', 'users',
-            'tests',)
+            'tests', 'test_size',)
