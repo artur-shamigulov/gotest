@@ -1,10 +1,14 @@
+import uuid
+
 from django.utils import timezone
-from django.utils import cache
+from django.core.cache import cache
 
 from django.db import models
 from django.contrib.auth.models import User
 
 from courses.models import Course
+
+from .utils import TestControllerRandom
 
 
 class Test(models.Model):
@@ -32,20 +36,25 @@ class Test(models.Model):
     def _get_test_name(uid):
         return'test_%s' % uid
 
-    @staticmethod
-    def _get_test_contorller(id, uid, length):
-        return 
+    def _get_test_controller(self, id, uid, length):
+        return TestControllerRandom(id, uid, length, self)
 
-    def start_test(self, user, duration):
+    def start_test(self, user, duration, length):
         test_log = TestLog.objects.create(
             test=self, user=user)
 
         cache.set(
             self._get_test_name(test_log.test_uid),
-            self._get_test_structure(
-                self.id, test_log.test_uid),
-            timeout=self.duration)
+            self._get_test_controller(
+                self.id, test_log.test_uid,
+                length),
+            timeout=duration)
         return test_log
+
+    @classmethod
+    def get_test(cls, test_uid):
+        return cache.get(
+            cls._get_test_name(test_uid))
 
 
 class AppointedTestQuerySet(models.QuerySet):
@@ -73,7 +82,7 @@ class AppointedTest(models.Model):
     tests = models.ManyToManyField(Test, verbose_name='Тесты')
     duration = models.PositiveSmallIntegerField('Длительность', default=60)
     test_size = models.PositiveSmallIntegerField(
-        'Количество вопросов', default=25, min_value=1)
+        'Количество вопросов', default=25)
     datetime_start = models.DateTimeField('Начало теста')
     datetime_end = models.DateTimeField('Окончание теста')
 
@@ -103,7 +112,7 @@ class AvailableTest(models.Model):
     users = models.ManyToManyField(User, verbose_name='Пользователи')
     tests = models.ManyToManyField(Test, verbose_name='Тесты')
     test_size = models.PositiveSmallIntegerField(
-        'Количество вопросов', min_value=1, default=25)
+        'Количество вопросов', default=25)
 
     class Meta:
         verbose_name = 'Доступный тест'
@@ -114,11 +123,11 @@ class AvailableTest(models.Model):
 
 
 class TestLog(models.Model):
-    test_uid = models.UUIDField(verbose_name="Код теста")
-    test = models.ForeignKey(Test, verbose_name="Тест")
-    user = models.ForeignKey(User, verbose_name="Пользователь")
+    test_uid = models.UUIDField(verbose_name="Код теста", default=uuid.uuid4)
+    test = models.ForeignKey(Test, verbose_name="Тест", on_delete=models.CASCADE)
+    user = models.ForeignKey(User, verbose_name="Пользователь", on_delete=models.CASCADE)
     datetime_created = models.DateTimeField('Начало теста', auto_now_add=True)
-    datetime_completed = models.DateTimeField('Начало теста')
+    datetime_completed = models.DateTimeField('Начало теста', blank=True, null=True)
     score = models.PositiveSmallIntegerField('Результат', default=0)
 
     class Meta:
