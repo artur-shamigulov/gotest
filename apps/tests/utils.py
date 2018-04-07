@@ -70,7 +70,6 @@ class TestControllerBase:
 
     def next_question(self):
         self.current_question_index = self.next_question_id()
-        print(self.current_question_index)
         return self._get_question(self.current_question_index)
 
     def prev_question(self):
@@ -88,7 +87,6 @@ class TestControllerRandom(TestControllerBase):
         self.questions_ids = list(self.test.question_set.all(
         ).order_by('?')[:self.length].values_list(
             'id', flat=True))
-        print(self.questions_ids)
 
     def _get_question(self, idx):
         if len(self.questions_ids) <= idx:
