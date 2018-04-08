@@ -1,4 +1,4 @@
-from random import random
+from random import random, randint
 
 from django.test import TestCase
 from django.contrib.auth.models import User
@@ -36,12 +36,20 @@ class TestRandomTestCase(TestCase):
     def test_random_test(self):
         test = Test.objects.first()
         item = test.start_test(self.user, 60, 25)
-        test = test.get_test(item.test_uid)
+        test = Test.get_test(item.test_uid)
         for i in range(30):
             question = test.next_question()
-            print(question)
-
             self.assertEqual(
                 isinstance(question, (NoQuestionBase, Question)),
                 True
             )
+
+        test = Test.get_test(item.test_uid)
+        for i in range(25):
+            test.next_question()
+            test.set_answer([randint(1, 4)])
+
+        test = Test.get_test(item.test_uid)
+        for i in range(25):
+            test.next_question()
+            print(test.current_question_index, test.get_answer())

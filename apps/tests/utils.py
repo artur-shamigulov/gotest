@@ -1,4 +1,5 @@
 from django.urls import reverse_lazy
+from django.core.cache import cache
 
 from main.utils import SidebarBaseTabs, SidebarBaseNavs
 
@@ -35,14 +36,49 @@ class NoQuestionBase(object):
 
 class TestControllerBase:
 
-    def __init__(self, id, uid, length, test):
+    def __init__(self, id, uid, length, test, duration):
         self.test_id = id
         self.test_uid = uid
         self.current_question_index = -1
         self.length = length
+        self.duration = duration
         self.test = test
-        self.answers = []
-        self.questions_ids = []
+        self.test_name = test._get_test_name(self.test_uid)
+        self.set_answers_list([None] * length)
+
+    @staticmethod
+    def get_question_list_name(test_name):
+        return '%s_qustions' % test_name
+
+    def set_question_list(self, q_list):
+        cache.set(
+            self.get_question_list_name(
+                self.test_name),
+            q_list,
+            timeout=self.duration
+        )
+
+    def get_question_list(self):
+        return cache.get(
+            self.get_question_list_name(
+                self.test_name))
+
+    @staticmethod
+    def get_answers_list_name(test_name):
+        return '%s_answers' % test_name
+
+    def set_answers_list(self, q_list):
+        cache.set(
+            self.get_answers_list_name(
+                self.test_name),
+            q_list,
+            timeout=self.duration
+        )
+
+    def get_answers_list(self):
+        return cache.get(
+            self.get_answers_list_name(
+                self.test_name))
 
     def _get_question_idx(self, index, question_list):
         for idx in range(self.length):
@@ -52,7 +88,7 @@ class TestControllerBase:
     def next_question_id(self):
         idx = self._get_question_idx(
             self.current_question_index,
-            self.questions_ids)
+            self.get_question_list())
         if idx is None:
             idx = 0
         return idx
@@ -60,7 +96,7 @@ class TestControllerBase:
     def prev_question_id(self):
         idx = self._get_question_idx(
             self.current_question_index,
-            self.questions_ids[::-1])
+            self.get_question_list()[::-1])
         if idx is None:
             idx = 0
         return idx
@@ -76,6 +112,14 @@ class TestControllerBase:
         self.current_question_index = self.prev_question_id()
         return self._get_question(self.current_question_index)
 
+    def set_answer(self, answer):
+        answers = self.get_answers_list()
+        answers[self.current_question_index] = answer
+        self.set_answers_list(answers)
+
+    def get_answer(self):
+        return self.get_answers_list()[self.current_question_index] or []
+
 
 class TestControllerRandom(TestControllerBase):
 
@@ -84,14 +128,14 @@ class TestControllerRandom(TestControllerBase):
         self._init_questions()
 
     def _init_questions(self):
-        self.questions_ids = list(self.test.question_set.all(
+        self.set_question_list(list(self.test.question_set.all(
         ).order_by('?')[:self.length].values_list(
-            'id', flat=True))
+            'id', flat=True)))
 
     def _get_question(self, idx):
-        if len(self.questions_ids) <= idx:
+        if len(self.get_question_list()) <= idx:
             return NoQuestionBase()
 
         return self.test.question_set.filter(
-            id=self.questions_ids[idx]).prefetch_related(
+            id=self.get_question_list()[idx]).prefetch_related(
             'answer_set').first() or NoQuestionBase()

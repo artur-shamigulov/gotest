@@ -36,8 +36,8 @@ class Test(models.Model):
     def _get_test_name(uid):
         return'test_%s' % uid
 
-    def _get_test_controller(self, id, uid, length):
-        return TestControllerRandom(id, uid, length, self)
+    def _get_test_controller(self, id, uid, length, duration):
+        return TestControllerRandom(id, uid, length, self, duration)
 
     def start_test(self, user, duration, length):
         test_log = TestLog.objects.create(
@@ -47,7 +47,7 @@ class Test(models.Model):
             self._get_test_name(test_log.test_uid),
             self._get_test_controller(
                 self.id, test_log.test_uid,
-                length),
+                length, duration),
             timeout=duration)
         return test_log
 
