@@ -57,4 +57,4 @@ class TestRandomTestCase(TestCase):
                 )
 
         test = Test.get_test(item.test_uid)
-        test.estimate()
+        self.assertEqual(test.estimate() == 0, False)

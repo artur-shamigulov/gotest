@@ -56,4 +56,17 @@ class BaseEstimator:
 class FewInOneEstimator(BaseEstimator):
 
     def estimate(self):
-        raise NotImplementedError
+        score = 0
+        result = self.get_result()
+        for question in result.values():
+            if question[1] == question[2]:
+
+                if question[1] == question[0]:
+                    if question[0] < 3:
+                        score += 1
+                    else:
+                        score += 3
+                elif question[1] - 1 == question[0]:
+                    if question[0] > 2:
+                        score += 1
+        return score

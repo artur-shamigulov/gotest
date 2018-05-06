@@ -2,7 +2,7 @@ from django.urls import reverse_lazy
 from django.core.cache import cache
 
 from main.utils import SidebarBaseTabs, SidebarBaseNavs
-from .estimators import BaseEstimator
+from .estimators import FewInOneEstimator
 
 
 class SidebarTestTabs(SidebarBaseTabs):
@@ -37,7 +37,7 @@ class NoQuestionBase(object):
 
 class TestControllerBase:
 
-    estimator_class = BaseEstimator
+    estimator_class = FewInOneEstimator
     non_question_class = NoQuestionBase
 
     def __init__(self, id, uid, length, test, duration):
@@ -135,7 +135,7 @@ class TestControllerBase:
 
     def estimate(self):
         estimator = self.get_estimator()
-        estimator.get_score()
+        return estimator.estimate()
 
 
 class TestControllerRandom(TestControllerBase):
