@@ -1,4 +1,5 @@
 import uuid
+from datetime import timedelta
 
 from django.utils import timezone
 from django.core.cache import cache
@@ -41,7 +42,8 @@ class Test(models.Model):
 
     def start_test(self, user, duration, length):
         test_log = TestLog.objects.create(
-            test=self, user=user)
+            test=self, user=user,
+            datetime_completed=timezone.now() + timedelta(minutes=60))
 
         cache.set(
             self._get_test_name(test_log.test_uid),
@@ -127,7 +129,7 @@ class TestLog(models.Model):
     test = models.ForeignKey(Test, verbose_name="Тест", on_delete=models.CASCADE)
     user = models.ForeignKey(User, verbose_name="Пользователь", on_delete=models.CASCADE)
     datetime_created = models.DateTimeField('Начало теста', auto_now_add=True)
-    datetime_completed = models.DateTimeField('Начало теста', blank=True, null=True)
+    datetime_completed = models.DateTimeField('Окончание теста', blank=True, null=True)
     score = models.PositiveSmallIntegerField('Результат', default=0)
 
     class Meta:

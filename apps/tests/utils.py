@@ -2,6 +2,7 @@ from django.urls import reverse_lazy
 from django.core.cache import cache
 
 from main.utils import SidebarBaseTabs, SidebarBaseNavs
+from .estimators import BaseEstimator
 
 
 class SidebarTestTabs(SidebarBaseTabs):
@@ -36,6 +37,9 @@ class NoQuestionBase(object):
 
 class TestControllerBase:
 
+    estimator_class = BaseEstimator
+    non_question_class = NoQuestionBase
+
     def __init__(self, id, uid, length, test, duration):
         self.test_id = id
         self.test_uid = uid
@@ -45,6 +49,9 @@ class TestControllerBase:
         self.test = test
         self.test_name = test._get_test_name(self.test_uid)
         self.set_answers_list([None] * length)
+
+    def __iter__(self):
+        return iter(self.get_question_list())
 
     @staticmethod
     def get_question_list_name(test_name):
@@ -120,6 +127,16 @@ class TestControllerBase:
     def get_answer(self):
         return self.get_answers_list()[self.current_question_index] or []
 
+    def get_answer_by_idx(self, idx):
+        return self.get_answers_list()[idx] or []
+
+    def get_estimator(self):
+        return self.estimator_class(self)
+
+    def estimate(self):
+        estimator = self.get_estimator()
+        estimator.get_score()
+
 
 class TestControllerRandom(TestControllerBase):
 
@@ -134,8 +151,8 @@ class TestControllerRandom(TestControllerBase):
 
     def _get_question(self, idx):
         if len(self.get_question_list()) <= idx:
-            return NoQuestionBase()
+            return self.non_question_class()
 
         return self.test.question_set.filter(
             id=self.get_question_list()[idx]).prefetch_related(
-            'answer_set').first() or NoQuestionBase()
+            'answer_set').first() or self.non_question_class()

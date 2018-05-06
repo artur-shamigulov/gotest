@@ -29,7 +29,7 @@ class TestRandomTestCase(TestCase):
                 answers.append(
                     Answer(
                         text='Ответ %s' % a_idx,
-                        is_true=random() > 0.8,
+                        is_true=random() > 0.5,
                         question=question))
             Answer.objects.bulk_create(answers)
 
@@ -47,9 +47,14 @@ class TestRandomTestCase(TestCase):
         test = Test.get_test(item.test_uid)
         for i in range(25):
             test.next_question()
-            test.set_answer([randint(1, 4)])
+            if isinstance(test._get_question(i), (Question,)):
+                test.set_answer(
+                    list(
+                        test._get_question(i).answer_set.filter(
+                            is_true=i < 13
+                        ).values_list('id', flat=True)
+                    )
+                )
 
         test = Test.get_test(item.test_uid)
-        for i in range(25):
-            test.next_question()
-            print(test.current_question_index, test.get_answer())
+        test.estimate()
