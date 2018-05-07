@@ -12,6 +12,10 @@ from courses.models import Course
 from .utils import TestControllerRandom
 
 
+class TestNotFound(object):
+    pass
+
+
 class Test(models.Model):
 
     ESTIMATE_METHODS = (
@@ -52,6 +56,16 @@ class Test(models.Model):
                 length, duration),
             timeout=duration)
         return test_log
+
+    @classmethod
+    def end_test(cls, test_uid):
+        test = cls.get_test(test_uid)
+        if test:
+            return TestLog.objects.filter(test_uid=test_uid).update(
+                datetime_completed=timezone.now(),
+                score=test.estimate()
+            )
+        return TestNotFound()
 
     @classmethod
     def get_test(cls, test_uid):

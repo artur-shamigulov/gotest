@@ -3,7 +3,7 @@ from random import random, randint
 from django.test import TestCase
 from django.contrib.auth.models import User
 
-from .models import Test
+from .models import Test, TestLog
 from .utils import NoQuestionBase
 from questions.models import Question
 from answers.models import Answer
@@ -56,5 +56,5 @@ class TestRandomTestCase(TestCase):
                     )
                 )
 
-        test = Test.get_test(item.test_uid)
-        self.assertEqual(test.estimate() == 0, False)
+        Test.end_test(item.test_uid)
+        print (TestLog.objects.first().__dict__)
