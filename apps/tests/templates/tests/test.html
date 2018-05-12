@@ -13,18 +13,26 @@
                     {{ question.text|safe }}
                     <select class="float-right from-control">
                         {% for question in test.get_question_list %}
-                            <option>{{ forloop.counter }}</option>
+                            <option value='{{ forloop.counter0 }}' {% if forloop.counter0 == test.current_question_index %} selected {% endif %}>
+                                {{ forloop.counter }}
+                            </option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="col-sm-12 mt-3">
-                    <form>
+                    <form id='qustion_form' action='.' method="POST">
+                        {% csrf_token %}
+                        <input type='hidden' id='next' name='next' value="{{ test.next_question_id }}">
                         {% for item in form.fields.answers.queryset %}
                             <div class="custom-control custom-checkbox mt-2">
                                 <input type="checkbox" class="custom-control-input" id="answer_{{ item.id }}" value='{{ item.id }}' name='answers'>
                                 <label class="custom-control-label" for="answer_{{ item.id }}">{{ item.text|safe }}</label>
                             </div>
                         {% endfor %}
+                        <div class="row">
+                            <input class="btn btn-primary" type="submit" value="Предыдуший">
+                            <input class="btn btn-primary" type="submit" value="Следующий">
+                        </div>
                     </form>
                 </div>
             </div>

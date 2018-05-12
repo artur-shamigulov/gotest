@@ -79,8 +79,11 @@ class TestView(
         SidebarBaseMixin,
         FormView):
 
-    from_class = QuestionForm
+    form_class = QuestionForm
     template_name = 'tests/test.html'
+
+    def no_question_response(self):
+        raise Http404
 
     def dispatch(self, request, uuid, *args, **kwargs):
         self.test = Test.get_test(uuid)
@@ -89,7 +92,7 @@ class TestView(
 
         self.question = self.test.current_question()
         if isinstance(self.question, (NoQuestionBase,)):
-            raise Http404
+            self.no_question_response()
         return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
@@ -98,10 +101,16 @@ class TestView(
         ctx['question'] = self.question
         return ctx
 
-    def get_form(self, from_class=None):
-        return self.from_class(
-            question=self.question)
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['question'] = self.question
+        return kwargs
 
+    def form_valid(self, form):
+        self.question = self.test.next_question()
+        if isinstance(self.question, (NoQuestionBase,)):
+            self.no_question_response()
+        return self.render_to_response(self.get_context_data())
 
 
 

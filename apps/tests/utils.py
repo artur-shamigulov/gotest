@@ -111,12 +111,20 @@ class TestControllerBase:
     def _get_question(self, idx):
         NotImplementedError
 
+    def write_to_cache(self):
+        cache.set(
+            self.test_name,
+            self,
+            timeout=cache.ttl(self.test_name))
+
     def next_question(self):
         self.current_question_index = self.next_question_id()
+        self.write_to_cache()
         return self._get_question(self.current_question_index)
 
     def prev_question(self):
         self.current_question_index = self.prev_question_id()
+        self.write_to_cache()
         return self._get_question(self.current_question_index)
 
     def current_question(self):

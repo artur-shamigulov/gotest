@@ -13,4 +13,6 @@ class QuestionForm(forms.Form):
 
     answers = forms.ModelMultipleChoiceField(
         queryset=Answer.objects.none(),
-        widget=CheckboxSelectMultiple)
+        widget=CheckboxSelectMultiple,
+        required=False)
+    next = forms.IntegerField()
