@@ -53,7 +53,7 @@ class Test(models.Model):
             self._get_test_name(test_log.test_uid),
             self._get_test_controller(
                 self.id, test_log.test_uid,
-                length, duration),
+                length, duration * 60),
             timeout=duration * 60)
         return test_log
 

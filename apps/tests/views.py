@@ -95,6 +95,7 @@ class TestView(
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx['test'] = self.test
+        ctx['question'] = self.question
         return ctx
 
     def get_form(self, from_class=None):
