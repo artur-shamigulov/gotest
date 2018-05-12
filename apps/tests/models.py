@@ -54,7 +54,7 @@ class Test(models.Model):
             self._get_test_controller(
                 self.id, test_log.test_uid,
                 length, duration),
-            timeout=duration)
+            timeout=duration * 60)
         return test_log
 
     @classmethod
@@ -127,6 +127,7 @@ class AvailableTest(models.Model):
         'Заголовок', default='Доступный тест', max_length=255)
     users = models.ManyToManyField(User, verbose_name='Пользователи')
     tests = models.ManyToManyField(Test, verbose_name='Тесты')
+    duration = models.PositiveSmallIntegerField('Длительность', default=60)
     test_size = models.PositiveSmallIntegerField(
         'Количество вопросов', default=25)
 
@@ -140,10 +141,19 @@ class AvailableTest(models.Model):
 
 class TestLog(models.Model):
     test_uid = models.UUIDField(verbose_name="Код теста", default=uuid.uuid4)
-    test = models.ForeignKey(Test, verbose_name="Тест", on_delete=models.CASCADE)
-    user = models.ForeignKey(User, verbose_name="Пользователь", on_delete=models.CASCADE)
+    test = models.ForeignKey(
+        Test, verbose_name="Тест", on_delete=models.CASCADE)
+    user = models.ForeignKey(
+        User, verbose_name="Пользователь", on_delete=models.CASCADE)
+    appointed_test = models.ForeignKey(
+        AppointedTest, verbose_name="Назначение",
+        on_delete=models.CASCADE, blank=True, null=True)
+    available_test = models.ForeignKey(
+        AvailableTest, verbose_name="Доступ",
+        on_delete=models.CASCADE, blank=True, null=True)
     datetime_created = models.DateTimeField('Начало теста', auto_now_add=True)
-    datetime_completed = models.DateTimeField('Окончание теста', blank=True, null=True)
+    datetime_completed = models.DateTimeField(
+        'Окончание теста', blank=True, null=True)
     score = models.PositiveSmallIntegerField('Результат', default=0)
 
     class Meta:

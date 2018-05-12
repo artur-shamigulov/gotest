@@ -59,6 +59,15 @@
                                         <a class="d-flex align-items-center text-muted" href="#">
                                         </a>
                                     </h6>
+                                    <ul class="nav flex-column">
+                                        {% for test in view.current_test %}
+                                            <li class="nav-item">
+                                                <a class="nav-link {% if tab.active %}active{% endif %}" href="{% url 'tests:test' test.test_uid %}">
+                                                    {{ test.test.title }}
+                                                </a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
                                 </div>
                             </nav>
                         {% endblock sidebar %}

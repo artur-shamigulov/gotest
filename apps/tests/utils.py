@@ -43,7 +43,7 @@ class TestControllerBase:
     def __init__(self, id, uid, length, test, duration):
         self.test_id = id
         self.test_uid = uid
-        self.current_question_index = -1
+        self.current_question_index = 0
         self.length = length
         self.duration = duration
         self.test = test
@@ -68,7 +68,7 @@ class TestControllerBase:
     def get_question_list(self):
         return cache.get(
             self.get_question_list_name(
-                self.test_name))
+                self.test_name)) or []
 
     @staticmethod
     def get_answers_list_name(test_name):
@@ -117,6 +117,9 @@ class TestControllerBase:
 
     def prev_question(self):
         self.current_question_index = self.prev_question_id()
+        return self._get_question(self.current_question_index)
+
+    def current_question(self):
         return self._get_question(self.current_question_index)
 
     def set_answer(self, answer):

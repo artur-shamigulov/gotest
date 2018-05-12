@@ -1,4 +1,7 @@
+from django.utils import timezone
+
 from tests.utils import SidebarTestTabs, SidebarTestNavs
+from tests.models import TestLog
 
 
 class SidebarBaseMixin(object):
@@ -16,6 +19,13 @@ class SidebarBaseMixin(object):
             if tab['name'] == self.active_tab:
                 tab['active'] = True
         return tabs
+
+    def current_test(self, **kwargs):
+        now = timezone.now()
+        return TestLog.objects.filter(
+            datetime_created__lte=now,
+            datetime_completed__gt=now,
+            user=self.request.user)
 
 
 class NavBaseMixin(object):
