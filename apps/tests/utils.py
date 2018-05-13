@@ -89,7 +89,6 @@ class TestControllerBase:
 
     @staticmethod
     def _get_question_idx(index, start, to):
-        print (start, to)
         for idx in range(start, to, 1):
             if idx > index:
                 return idx
@@ -145,7 +144,7 @@ class TestControllerBase:
         self.set_answers_list(answers)
 
     def get_answer(self):
-        return self.get_answers_list()[self.current_question_index] or []
+        return self.get_answers_list()[self.current_question_index]
 
     def get_answer_by_idx(self, idx):
         return self.get_answers_list()[idx] or []

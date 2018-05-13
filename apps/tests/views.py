@@ -6,7 +6,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from main.mixins import SidebarBaseMixin, NavBaseMixin
 
-from .models import Test, AppointedTest, AvailableTest
+from .models import Test, AppointedTest, AvailableTest, TestLog
 from questions.forms import QuestionForm
 
 from .utils import NoQuestionBase
@@ -101,9 +101,13 @@ class TestView(
         ctx = super().get_context_data(**kwargs)
         ctx['test'] = self.test
         ctx['question'] = self.question
-        ctx['answers'] = self.test.get_answers_list()
-        print(ctx['answers'])
         return ctx
+
+    def get_initial(self):
+        answers = self.test.get_answer()
+        return {
+            'answers': answers and answers.values_list('id', flat=True) or []
+        }
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -112,7 +116,19 @@ class TestView(
 
     def form_valid(self, form):
         data = form.cleaned_data
-        self.test.set_answers_list(data['answers'])
+        self.test.set_answer(
+            data['answers']
+        )
+
+        if data.get('complete_test'):
+            Test.end_test(self.test.test_uid)
+            return HttpResponseRedirect(
+                reverse_lazy(
+                    'tests:complete_test',
+                    kwargs={
+                        'uuid': self.test.test_uid}
+                )
+            )
         return HttpResponseRedirect(
             reverse_lazy(
                 'tests:test',
@@ -122,4 +138,19 @@ class TestView(
         )
 
 
+class CompleteTestView(TestListBaseView):
 
+    template_name = 'tests/completed_test.html'
+
+    def dispatch(self, request, uuid, *args, **kwargs):
+        self.test = Test.get_test(uuid)
+        if not self.test:
+            raise Http404
+        return super().dispatch(request, uuid, *args, **kwargs)
+
+    def get_context_data(self, *args, **kwargs):
+        ctx = super().get_context_data(*args, **kwargs)
+        ctx['test'] = self.test
+        ctx['estimate'] = TestLog.objects.get(
+            test_uid=self.test.test_uid).score
+        return ctx

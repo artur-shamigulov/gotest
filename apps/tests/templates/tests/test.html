@@ -3,9 +3,14 @@
 {% block body_content %}
     <div class="col-sm-12">
         <div class='row'>
-            <h3>
-                {{ test.test.title }} 
-            </h3>
+            <div class="col-sm-9">
+                <h3>
+                    {{ test.test.title }} 
+                </h3>
+            </div>
+            <div class="col-sm-3">
+                <input type="submit" id="complete_test_button" name="submit" value="Завершить" class="float-right btn btn-primary">
+            </div>
         </div>
         <div class='row justify-content-center'>
             <div class='card flex-md-row box-shadow col-sm-12 p-4 row'>
@@ -22,10 +27,11 @@
                 <div class="col-sm-12 mt-3">
                     <form id='question_form' action='.' method="POST">
                         {% csrf_token %}
+                        <input type="hidden" name="complete_test" id="complete_test">
                         <input type='hidden' id='next' name='next' value="{{ test.next_question_id }}">
                         {% for item in form.fields.answers.queryset %}
                             <div class="custom-control custom-checkbox mt-2">
-                                <input type="checkbox" class="custom-control-input" id="answer_{{ item.id }}" value='{{ item.id }}' name='answers'>
+                                <input type="checkbox" class="custom-control-input" id="answer_{{ item.id }}" value='{{ item.id }}' name='answers' {% if item.id in form.initial.answers %} checked="checked" {% endif %}>
                                 <label class="custom-control-label" for="answer_{{ item.id }}">{{ item.text|safe }}</label>
                             </div>
                         {% endfor %}
@@ -50,6 +56,8 @@
                 next_selector = $('#next_selector'),
                 next_button = $('#next_button'),
                 prev_button = $('#prev_button'),
+                complete_test = $('#complete_test')
+                complete_test_button = $('#complete_test_button')
                 form = $('#question_form');
 
             console.log(form)
@@ -63,13 +71,19 @@
 
             function button_click(e) {
                 var $this = $(e.target);
-                console.log($this.data('next'))
                 next.val($this.data('next'))
                 form.submit()
             }
 
             next_button.click(button_click)
             prev_button.click(button_click)
+
+            complete_test_button.click(function () {
+                var $this = $(this);
+
+                complete_test.val(1);
+                form.submit();
+            })
         })
     </script>
 {% endblock body_content %}

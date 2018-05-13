@@ -29,7 +29,7 @@ class BaseEstimator:
                 right_count=Sum(
                     Case(
                         When(
-                            Q(answer__id__in=answers_ids) & Q(answer__is_true=True),
+                            Q(answer__in=answers_ids) & Q(answer__is_true=True),
                             then=1
                         ),
                         default=0,

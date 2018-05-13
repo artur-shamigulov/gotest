@@ -16,3 +16,4 @@ class QuestionForm(forms.Form):
         widget=CheckboxSelectMultiple,
         required=False)
     next = forms.IntegerField()
+    complete_test = forms.BooleanField(required=False)
