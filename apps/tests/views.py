@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.urls import reverse_lazy
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.views.generic import TemplateView, RedirectView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -70,7 +70,9 @@ class StartAvailableTestView(
             duration=available_test.duration, length=available_test.test_size)
         test_log.available_test = available_test
         test_log.save()
-        return reverse_lazy('tests:test', kwargs={'uuid': test_log.test_uid})
+        return reverse_lazy(
+            'tests:test',
+            kwargs={'uuid': test_log.test_uid, 'page': 1})
 
 
 class TestView(
@@ -85,12 +87,12 @@ class TestView(
     def no_question_response(self):
         raise Http404
 
-    def dispatch(self, request, uuid, *args, **kwargs):
+    def dispatch(self, request, uuid, page, *args, **kwargs):
         self.test = Test.get_test(uuid)
         if not self.test:
             raise Http404
 
-        self.question = self.test.current_question()
+        self.question = self.test.set_current_question(page - 1)
         if isinstance(self.question, (NoQuestionBase,)):
             self.no_question_response()
         return super().dispatch(request, *args, **kwargs)
@@ -99,6 +101,8 @@ class TestView(
         ctx = super().get_context_data(**kwargs)
         ctx['test'] = self.test
         ctx['question'] = self.question
+        ctx['answers'] = self.test.get_answers_list()
+        print(ctx['answers'])
         return ctx
 
     def get_form_kwargs(self):
@@ -107,13 +111,15 @@ class TestView(
         return kwargs
 
     def form_valid(self, form):
-        self.question = self.test.next_question()
-        if isinstance(self.question, (NoQuestionBase,)):
-            self.no_question_response()
-        return self.render_to_response(self.get_context_data())
-
-
-
+        data = form.cleaned_data
+        self.test.set_answers_list(data['answers'])
+        return HttpResponseRedirect(
+            reverse_lazy(
+                'tests:test',
+                kwargs={
+                    'uuid': self.test.test_uid,
+                    'page': data['next'] + 1})
+        )
 
 
 

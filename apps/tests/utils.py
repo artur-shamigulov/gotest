@@ -87,26 +87,30 @@ class TestControllerBase:
             self.get_answers_list_name(
                 self.test_name))
 
-    def _get_question_idx(self, index, question_list):
-        for idx in range(self.length):
+    @staticmethod
+    def _get_question_idx(index, start, to):
+        print (start, to)
+        for idx in range(start, to, 1):
             if idx > index:
                 return idx
 
     def next_question_id(self):
         idx = self._get_question_idx(
             self.current_question_index,
-            self.get_question_list())
+            0,
+            self.length)
         if idx is None:
             idx = 0
         return idx
 
     def prev_question_id(self):
         idx = self._get_question_idx(
-            self.current_question_index,
-            self.get_question_list()[::-1])
+            self.current_question_index * -1,
+            self.length * -1,
+            1)
         if idx is None:
-            idx = 0
-        return idx
+            idx = (self.length - 1) * -1
+        return (idx) * -1
 
     def _get_question(self, idx):
         NotImplementedError
@@ -116,6 +120,11 @@ class TestControllerBase:
             self.test_name,
             self,
             timeout=cache.ttl(self.test_name))
+
+    def set_current_question(self, idx):
+        self.current_question_index = idx
+        self.write_to_cache()
+        return self._get_question(self.current_question_index)
 
     def next_question(self):
         self.current_question_index = self.next_question_id()

@@ -62,7 +62,7 @@
                                     <ul class="nav flex-column">
                                         {% for test in view.current_test %}
                                             <li class="nav-item">
-                                                <a class="nav-link {% if tab.active %}active{% endif %}" href="{% url 'tests:test' test.test_uid %}">
+                                                <a class="nav-link {% if tab.active %}active{% endif %}" href="{% url 'tests:test' test.test_uid 1 %}">
                                                     {{ test.test.title }}
                                                 </a>
                                             </li>

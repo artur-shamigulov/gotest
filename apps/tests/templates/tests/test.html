@@ -11,7 +11,7 @@
             <div class='card flex-md-row box-shadow col-sm-12 p-4 row'>
                 <div class="col-sm-12">
                     {{ question.text|safe }}
-                    <select class="float-right from-control">
+                    <select id="next_selector" class="float-right from-control">
                         {% for question in test.get_question_list %}
                             <option value='{{ forloop.counter0 }}' {% if forloop.counter0 == test.current_question_index %} selected {% endif %}>
                                 {{ forloop.counter }}
@@ -20,7 +20,7 @@
                     </select>
                 </div>
                 <div class="col-sm-12 mt-3">
-                    <form id='qustion_form' action='.' method="POST">
+                    <form id='question_form' action='.' method="POST">
                         {% csrf_token %}
                         <input type='hidden' id='next' name='next' value="{{ test.next_question_id }}">
                         {% for item in form.fields.answers.queryset %}
@@ -29,9 +29,13 @@
                                 <label class="custom-control-label" for="answer_{{ item.id }}">{{ item.text|safe }}</label>
                             </div>
                         {% endfor %}
-                        <div class="row">
-                            <input class="btn btn-primary" type="submit" value="Предыдуший">
-                            <input class="btn btn-primary" type="submit" value="Следующий">
+                        <div class="row mt-4">
+                            <div class="col-sm-6">
+                                <input class="btn btn-primary" type="submit" data-next='{{ test.prev_question_id }}' id='prev_button' value="Предыдуший">
+                            </div>
+                            <div class="col-sm-6">
+                                <input class="btn btn-primary float-right" data-next='{{ test.next_question_id }}' id='next_button' type="submit" value="Следующий">
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -39,4 +43,33 @@
         </div>
 
     </div>
+    <script type="text/javascript" src="{% static 'utils/js/jquery-3.3.1.min.js' %}"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            var next = $('#next'),
+                next_selector = $('#next_selector'),
+                next_button = $('#next_button'),
+                prev_button = $('#prev_button'),
+                form = $('#question_form');
+
+            console.log(form)
+
+            next_selector.change(function() {
+                var $this = $(this);
+
+                next.val($this.val())
+                form.submit()
+            })
+
+            function button_click(e) {
+                var $this = $(e.target);
+                console.log($this.data('next'))
+                next.val($this.data('next'))
+                form.submit()
+            }
+
+            next_button.click(button_click)
+            prev_button.click(button_click)
+        })
+    </script>
 {% endblock body_content %}
