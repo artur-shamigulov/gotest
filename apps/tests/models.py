@@ -77,6 +77,7 @@ class AppointedTestQuerySet(models.QuerySet):
 
     def future(self, **kwargs):
         kwargs['datetime_end__gte'] = timezone.now()
+        kwargs['testlog__isnull'] = True
 
         return self.filter(**kwargs)
 

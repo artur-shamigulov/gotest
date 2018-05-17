@@ -75,6 +75,27 @@ class StartAvailableTestView(
             kwargs={'uuid': test_log.test_uid, 'page': 1})
 
 
+class StartAppointedTestView(
+        LoginRequiredMixin,
+        RedirectView):
+
+    def get_redirect_url(self, slug, **kwargs):
+        test = get_object_or_404(Test, slug=slug)
+
+        appointed_test = get_list_or_404(
+            AppointedTest, users=self.request.user, tests=test
+        )[0]
+
+        test_log = test.start_test(
+            self.request.user,
+            duration=appointed_test.duration, length=appointed_test.test_size)
+        test_log.appointed_test = appointed_test
+        test_log.save()
+        return reverse_lazy(
+            'tests:test',
+            kwargs={'uuid': test_log.test_uid, 'page': 1})
+
+
 class TestView(
         LoginRequiredMixin,
         NavBaseMixin,

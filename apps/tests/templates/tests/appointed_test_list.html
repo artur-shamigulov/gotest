@@ -9,7 +9,7 @@
                         <p class="card-text">{{ test.description }}</p>
                         <p class="card-text">Назначен c {{ appointed_test.datetime_start }} до {{ appointed_test.datetime_end }}</p>
                         <p class="card-text">Длительность {{ appointed_test.duration }} минут</p>
-                        <a href="#" class="btn btn-primary {% if not appointed_test.is_available %} disabled {% endif %}">Пройти тест</a>
+                        <a href="{% url 'tests:start_appointed_test' test.slug %}" class="btn btn-primary {% if not appointed_test.is_available %} disabled {% endif %}">Пройти тест</a>
                     </div>
                 </div>
             </div>
