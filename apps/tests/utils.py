@@ -22,7 +22,23 @@ class SidebarTestTabs(SidebarBaseTabs):
     ]
 
 
+class SidebarStaffTabs(SidebarBaseTabs):
+    tabs_list = [
+        {
+            'title': 'Статистика',
+            'name': 'statistic',
+            'url': reverse_lazy('test:appointed'),
+            'active': False
+        },
+    ]
+
+
 class SidebarTestNavs(SidebarBaseNavs):
+    navs_list = [
+    ]
+
+
+class SidebarStaffNavs(SidebarBaseNavs):
     navs_list = [
         {
             'title': 'Админ панель',

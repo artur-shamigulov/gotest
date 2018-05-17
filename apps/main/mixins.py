@@ -1,6 +1,9 @@
 from django.utils import timezone
 
-from tests.utils import SidebarTestTabs, SidebarTestNavs
+from tests.utils import (
+    SidebarTestTabs, SidebarTestNavs,
+    SidebarStaffNavs, SidebarStaffTabs
+)
 from tests.models import TestLog
 
 
@@ -9,6 +12,8 @@ class SidebarBaseMixin(object):
     active_tab = None
 
     def tabs_list_factory(self):
+        if self.request.user.is_staff:
+            return SidebarStaffTabs(self)
         return SidebarTestTabs(self)
 
     def tabs_list(self, **kwargs):
@@ -31,6 +36,8 @@ class SidebarBaseMixin(object):
 class NavBaseMixin(object):
 
     def navs_list_factory(self):
+        if self.request.user.is_staff:
+            return SidebarStaffNavs(self)
         return SidebarTestNavs(self)
 
     def navs_list(self, **kwargs):
