@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'apps.tests',
     'apps.questions',
     'apps.answers',
+    'apps.stats',
 ]
 
 MIDDLEWARE = [

@@ -1,0 +1,39 @@
+{% extends 'stats/base_static.html' %}
+{% load static %}
+{% block content_title %}
+	Статистика по тестам
+{% endblock content_title %}
+{% block stats_content %}
+	<div class="nav-scroller py-1 mb-2">
+		<nav class="nav d-flex">
+			<a class="p-2 text-muted" href="#">
+				<select id="test_list" class="form-control">
+					{% for course in view.get_courses %}
+						<option value="{% url 'stats:summary_by_tests_ajax' course.id %}">{{ course.title }}</option>
+					{% endfor %}
+				</select>
+			</a>
+		</nav>
+	</div>
+	<div id="table_container">
+	</div>
+	<script type="text/javascript" src="{% static 'utils/js/jquery-3.3.1.min.js' %}"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			var container = $('#table_container')
+
+			$('#test_list').change(function() {
+				var $this = $(this);
+
+				$.ajax({
+					url: $this.val(),
+					success: function(data) {
+						container.html(data);
+					}
+				})
+			})
+
+			$('#test_list').change();
+		})
+	</script>
+{% endblock stats_content %}

@@ -27,7 +27,7 @@ class SidebarStaffTabs(SidebarBaseTabs):
         {
             'title': 'Статистика',
             'name': 'statistic',
-            'url': reverse_lazy('test:appointed'),
+            'url': reverse_lazy('stats:summary_by_tests'),
             'active': False
         },
     ]

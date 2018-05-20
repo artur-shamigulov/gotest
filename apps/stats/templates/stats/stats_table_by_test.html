@@ -1,0 +1,16 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Тест</th>
+      <th scope="col">Средний результат</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in view.rows %}
+      <tr>
+        <th>{{ item.title }}</th>
+        <td>{{ item.mean_score }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
