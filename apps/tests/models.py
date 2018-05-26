@@ -160,6 +160,9 @@ class TestLog(models.Model):
     class Meta:
         verbose_name = 'История тестов'
         verbose_name_plural = 'Истории тестов'
+        permissions = (
+            ('can_read_stats', 'Может просмотривать статистику'),
+        )
 
     def __str__(self):
         return '%s %s %s' % self.test.title, self.user.username, self.score

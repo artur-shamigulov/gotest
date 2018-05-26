@@ -1,8 +1,9 @@
 from django.views.generic import TemplateView
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import (
     Avg, Max, Case, When, IntegerField, Count, F, Q, Sum)
 from django.contrib.auth.models import User
+from django.urls import reverse_lazy
 
 from main.mixins import SidebarBaseMixin, NavBaseMixin
 
@@ -16,9 +17,11 @@ from groups.models import UserGroup
 class StatsBaseView(
         LoginRequiredMixin,
         NavBaseMixin,
+        PermissionRequiredMixin,
         SidebarBaseMixin):
 
-    pass
+    permission_required = 'tests.can_read_stats'
+    login_url = reverse_lazy('account:login')
 
 
 class StatsSummaryByTestView(StatsBaseView, TemplateView):
@@ -131,9 +134,12 @@ class ResultsDetailByUserView(StatsBaseView, TemplateView):
 
     template_name = 'stats/detail_results_by_user.html'
 
+    def get_user_id(self):
+        return self.kwargs['id']
+
     def rows(self):
         return list(TestLog.objects.filter(
-            user=self.kwargs['id']
+            user=self.get_user_id()
         ).values('test__id').annotate(
             avg_available=Avg(
                 Case(
@@ -154,12 +160,12 @@ class ResultsDetailByUserView(StatsBaseView, TemplateView):
         ).values(
             'test__title', 'max_appointed', 'avg_available'
         )) + list(Test.objects.filter(
-            Q(availabletest__users=self.kwargs['id']) |
-            Q(appointedtest__users=self.kwargs['id'])
+            Q(availabletest__users=self.get_user_id()) |
+            Q(appointedtest__users=self.get_user_id())
         ).annotate(
             test_log_count=Sum(Case(
                 When(
-                    testlog__user_id=self.kwargs['id'], then=1),
+                    testlog__user_id=self.get_user_id(), then=1),
                 default=0,
                 output_field=IntegerField()
             )),
