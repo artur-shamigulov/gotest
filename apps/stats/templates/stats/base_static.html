@@ -8,8 +8,8 @@
 		</h1>
 		<div class="btn-toolbar mb-2 mb-md-0">
 			<div class="btn-group mr-2">
-				<a href="#" class="btn btn-sm btn-outline-secondary {% if view.active_tab == 'summary_by_tests' %}active{% endif %}">Статистика по курсам</a>
-				<a href="#" class="btn btn-sm btn-outline-secondary {% if view.active_tab == 'by_students' %}active{% endif %}">Статистика по студентам</a>
+				<a href="{% url 'stats:summary_by_tests' %}" class="btn btn-sm btn-outline-secondary {% if view.active_tab == 'summary_by_tests' %}active{% endif %}">Статистика по курсам</a>
+				<a href="{% url 'stats:summary_by_users' %}" class="btn btn-sm btn-outline-secondary {% if view.active_tab == 'summary_by_users' %}active{% endif %}">Статистика по пользователям</a>
 			</div>
 		</div>
 	</div>

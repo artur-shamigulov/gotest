@@ -1,0 +1,28 @@
+{% extends 'stats/base_static.html' %}
+{% load static %}
+{% block content_title %}
+	Статистика по пользователям
+{% endblock content_title %}
+{% block stats_content %}
+	<div id="table_container">
+		<table class="table">
+		  <thead>
+		    <tr>
+		      <th scope="col">Тест</th>
+		      <th scope="col">Средний результат по тренировкам</th>
+		      <th scope="col">Контрольный результат</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    {% for item in view.rows %}
+		      <tr>
+		        <th><a href="#">{{ item.test__title }}</a></th>
+		        <td>{{ item.avg_available|floatformat:2|default:"n/a" }}</td>
+		        <td>{{ item.max_appointed|floatformat:2|default:"n/a" }}</td>
+		      </tr>
+		    {% endfor %}
+		  </tbody>
+		</table>
+
+	</div>
+{% endblock stats_content %}

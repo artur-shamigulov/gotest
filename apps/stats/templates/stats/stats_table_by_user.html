@@ -1,0 +1,18 @@
+<table class="table">
+  <thead>
+    <tr>
+      <th scope="col">Пользователь</th>
+      <th scope="col">Средний результат по тренировкам</th>
+      <th scope="col">Средний результат по контрольным</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in view.rows %}
+      <tr>
+        <th><a href="{% url 'stats:detailed_by_users' item.id %}">{{ item.username }}</a></th>
+        <td>{{ item.avg_available|floatformat:2 }}</td>
+        <td>{{ item.avg_appointed|floatformat:2 }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
