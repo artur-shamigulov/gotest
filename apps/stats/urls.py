@@ -3,7 +3,8 @@ from django.urls import path
 from .views import (
     StatsSummaryByTestView, TestTableStatsAjaxView,
     ResultsDetailByTestView, StatsSumaryByUsersView,
-    UserTableStatsAjaxView, ResultsDetailByUserView)
+    UserTableStatsAjaxView, ResultsDetailByUserView,
+    ResulultsDetailedOwnView)
 
 urlpatterns = [
     path(
@@ -30,4 +31,8 @@ urlpatterns = [
         'detailed-by-users/<int:id>/',
         ResultsDetailByUserView.as_view(),
         name="detailed_by_users"),
+    path(
+        'own-stats/',
+        ResulultsDetailedOwnView.as_view(),
+        name="own_stats"),
 ]

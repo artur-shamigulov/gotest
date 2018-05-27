@@ -18,6 +18,12 @@ class SidebarTestTabs(SidebarBaseTabs):
             'name': 'available',
             'url': reverse_lazy('test:available'),
             'active': False
+        },
+        {
+            'title': 'Результаты',
+            'name': 'results',
+            'url': reverse_lazy('stats:own_stats'),
+            'active': False
         }
     ]
 

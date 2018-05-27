@@ -99,6 +99,9 @@ class ResultsDetailByTestView(StatsBaseView, TemplateView):
 
     template_name = 'stats/detail_results_by_test.html'
 
+    def title(self):
+        return Test.objects.get(id=self.kwargs['id'])
+
     def rows(self):
         return list(TestLog.objects.filter(
             test=self.kwargs['id']
@@ -120,14 +123,15 @@ class ResultsDetailByTestView(StatsBaseView, TemplateView):
                 )
             ),
         ).values(
-            'user__username', 'max_appointed', 'avg_available'
+            'user__username', 'user__id', 'max_appointed', 'avg_available'
         )) + list(User.objects.filter(
             Q(availabletest__tests=self.kwargs['id']) |
             Q(appointedtest__tests=self.kwargs['id'])
         ).annotate(
             test_log_count=Count('testlog'),
             user__username=F('username'),
-        ).filter(test_log_count=0).values('user__username'))
+            user__id=F('id'),
+        ).filter(test_log_count=0).values('user__username', 'user__id'))
 
 
 class ResultsDetailByUserView(StatsBaseView, TemplateView):
@@ -136,6 +140,9 @@ class ResultsDetailByUserView(StatsBaseView, TemplateView):
 
     def get_user_id(self):
         return self.kwargs['id']
+
+    def title(self):
+        return User.objects.get(id=self.kwargs['id'])
 
     def rows(self):
         return list(TestLog.objects.filter(
@@ -158,7 +165,7 @@ class ResultsDetailByUserView(StatsBaseView, TemplateView):
                 )
             ),
         ).values(
-            'test__title', 'max_appointed', 'avg_available'
+            'test__title', 'test__id', 'max_appointed', 'avg_available'
         )) + list(Test.objects.filter(
             Q(availabletest__users=self.get_user_id()) |
             Q(appointedtest__users=self.get_user_id())
@@ -170,4 +177,16 @@ class ResultsDetailByUserView(StatsBaseView, TemplateView):
                 output_field=IntegerField()
             )),
             test__title=F('title'),
-        ).filter(test_log_count=0).values('test__title'))
+            test__id=F('id'),
+        ).filter(test_log_count=0).values('test__title', 'test__id'))
+
+
+class ResulultsDetailedOwnView(ResultsDetailByUserView):
+
+    template_name = 'stats/own_detailed_result.html'
+
+    def get_permission_required(self):
+        return tuple()
+
+    def get_user_id(self):
+        return self.request.user.id

@@ -1,7 +1,7 @@
 {% extends 'stats/base_static.html' %}
 {% load static %}
 {% block content_title %}
-	Статистика по тестам
+	Статистика по {{ view.title }}
 {% endblock content_title %}
 {% block stats_content %}
 	<div id="table_container">
@@ -16,7 +16,7 @@
 		  <tbody>
 		    {% for item in view.rows %}
 		      <tr>
-		        <th><a href="#">{{ item.user__username }}</a></th>
+		        <th><a href="{% url 'stats:detailed_by_users' item.user__id %}">{{ item.user__username }}</a></th>
 		        <td>{{ item.avg_available|floatformat:2|default:"n/a" }}</td>
 		        <td>{{ item.max_appointed|floatformat:2|default:"n/a" }}</td>
 		      </tr>
