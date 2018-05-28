@@ -1,0 +1,60 @@
+{% extends 'stats/base_static.html' %}
+{% load static %}
+{% block content_title %}
+	Статистика по студент/тест
+{% endblock content_title %}
+{% block stats_content %}
+	{% with total_stats=view.total_stats %}
+		<p><strong>Прохождений тренировок:</strong> {{ total_stats.train_count }}</p>
+		<p><strong>Средний бал за тренировки:</strong> {{ total_stats.avg_available }}</p>
+		<p><strong>Котрольный бал:</strong> {{ total_stats.max_appointed }}</p>
+	{% endwith %}
+	<h4>Контроль</h4>
+	<div id="table_container">
+		<table class="table">
+		  <thead>
+		    <tr>
+		      <th scope="col">Длительность</th>
+		      <th scope="col">Количество вопросов</th>
+		      <th scope="col">Время назначения</th>
+		      <th scope="col">Время начала</th>
+		      <th scope="col">Время окончания</th>
+		      <th scope="col">Результат</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    {% for row in view.appointed_list %}
+		      <tr>
+		        <th>{{ row.duration }}</th>
+		        <th>{{ row.test_size }}</th>
+		        <th>{{ row.datetime_start }}</th>
+		        <td>{{ row.datetime_started }}</td>
+		        <td>{{ row.datetime_ended }}</td>
+		        <td>{{ row.score }}</td>
+		      </tr>
+		    {% endfor %}
+		  </tbody>
+		</table>
+	</div>
+	<h4>Тренировки</h4>
+	<div id="table_container">
+		<table class="table">
+		  <thead>
+		    <tr>
+		      <th scope="col">Время начала</th>
+		      <th scope="col">Время окончания</th>
+		      <th scope="col">Результат</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    {% for row in view.available_list %}
+		      <tr>
+		        <td>{{ row.datetime_started }}</td>
+		        <td>{{ row.datetime_ended }}</td>
+		        <td>{{ row.score }}</td>
+		      </tr>
+		    {% endfor %}
+		  </tbody>
+		</table>
+	</div>
+{% endblock stats_content %}

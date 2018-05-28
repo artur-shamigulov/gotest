@@ -19,6 +19,7 @@
 		        <th>{{ item.test__title }}</th>
 		        <td>{{ item.avg_available|floatformat:2|default:"n/a" }}</td>
 		        <td>{{ item.max_appointed|floatformat:2|default:"n/a" }}</td>
+		        <td><a href="{% url 'stats:user_test_detailed' view.request.user.id item.test__id %}">Детально</a></td>
 		      </tr>
 		    {% endfor %}
 		  </tbody>

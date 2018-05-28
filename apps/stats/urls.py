@@ -4,7 +4,7 @@ from .views import (
     StatsSummaryByTestView, TestTableStatsAjaxView,
     ResultsDetailByTestView, StatsSumaryByUsersView,
     UserTableStatsAjaxView, ResultsDetailByUserView,
-    ResulultsDetailedOwnView)
+    ResulultsDetailedOwnView, UserTestDetailedView)
 
 urlpatterns = [
     path(
@@ -35,4 +35,8 @@ urlpatterns = [
         'own-stats/',
         ResulultsDetailedOwnView.as_view(),
         name="own_stats"),
+    path(
+        'user-test-detailed/<int:id>/<int:test_id>',
+        UserTestDetailedView.as_view(),
+        name="user_test_detailed"),
 ]

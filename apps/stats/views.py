@@ -190,3 +190,64 @@ class ResulultsDetailedOwnView(ResultsDetailByUserView):
 
     def get_user_id(self):
         return self.request.user.id
+
+
+class UserTestDetailedView(LoginRequiredMixin,
+                           NavBaseMixin,
+                           SidebarBaseMixin,
+                           TemplateView):
+
+        template_name = 'stats/user_test_detailed.html'
+
+        def get_user_id(self):
+            if self.request.user.has_perm('tests.can_read_stats'):
+                return self.kwargs['id']
+            return self.request.user.id
+
+        def total_stats(self):
+            return TestLog.objects.filter(
+                test=self.kwargs['test_id'],
+                user=self.get_user_id()
+            ).aggregate(
+                train_count=Sum(Case(
+                    When(available_test__isnull=False, then=1),
+                    default=0,
+                    output_field=IntegerField())
+                ),
+                avg_available=Avg(
+                    Case(
+                        When(
+                            available_test__isnull=False, then='score'),
+                        default=0,
+                        output_field=IntegerField()
+                    )
+                ),
+                max_appointed=Max(
+                    Case(
+                        When(
+                            appointed_test__isnull=False, then='score'),
+                        default=0,
+                        output_field=IntegerField()
+                    )
+                ),
+            )
+
+        def appointed_list(self):
+            return AppointedTest.objects.filter(
+                tests=self.kwargs['test_id'],
+                users=self.get_user_id()
+            ).annotate(
+                datetime_started=F('testlog__datetime_created'),
+                datetime_ended=F('testlog__datetime_completed'),
+                score=F('testlog__score'),
+            )
+
+        def available_list(self):
+            return AvailableTest.objects.filter(
+                tests=self.kwargs['test_id'],
+                users=self.get_user_id()
+            ).annotate(
+                datetime_started=F('testlog__datetime_created'),
+                datetime_ended=F('testlog__datetime_completed'),
+                score=F('testlog__score'),
+            )
