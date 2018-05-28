@@ -3,6 +3,12 @@
 {% block content_title %}
 	Статистика по студент/тест
 {% endblock content_title %}
+
+{% block stats_nav %}
+	{% if view.request.user.is_staff %}
+		{{ block.super }}
+	{% endif %}
+{% endblock stats_nav %}
 {% block stats_content %}
 	{% with total_stats=view.total_stats %}
 		<p><strong>Прохождений тренировок:</strong> {{ total_stats.train_count }}</p>
