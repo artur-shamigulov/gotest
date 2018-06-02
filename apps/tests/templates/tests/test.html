@@ -30,10 +30,17 @@
                         <input type="hidden" name="complete_test" id="complete_test">
                         <input type='hidden' id='next' name='next' value="{{ test.next_question_id }}">
                         {% for item in form.fields.answers.queryset %}
-                            <div class="custom-control custom-checkbox mt-2">
-                                <input type="checkbox" class="custom-control-input" id="answer_{{ item.id }}" value='{{ item.id }}' name='answers' {% if item.id in form.initial.answers %} checked="checked" {% endif %}>
-                                <label class="custom-control-label" for="answer_{{ item.id }}">{{ item.text|safe }}</label>
-                            </div>
+                            {% if view.test.test.estimate_method == 'default' %}
+                                <div class="custom-control custom-radio mt-2">
+                                    <input type="radio" class="custom-control-input" id="answer_{{ item.id }}" value='{{ item.id }}' name='answers' {% if item.id in form.initial.answers %} checked="checked" {% endif %}>
+                                    <label class="custom-control-label" for="answer_{{ item.id }}">{{ item.text|safe }}</label>
+                                </div>
+                            {% else %}
+                                <div class="custom-control custom-checkbox mt-2">
+                                    <input type="checkbox" class="custom-control-input" id="answer_{{ item.id }}" value='{{ item.id }}' name='answers' {% if item.id in form.initial.answers %} checked="checked" {% endif %}>
+                                    <label class="custom-control-label" for="answer_{{ item.id }}">{{ item.text|safe }}</label>
+                                </div>
+                            {% endif %}
                         {% endfor %}
                         <div class="row mt-4">
                             <div class="col-sm-6">

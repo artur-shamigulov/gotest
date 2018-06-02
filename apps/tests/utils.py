@@ -2,7 +2,7 @@ from django.urls import reverse_lazy
 from django.core.cache import cache
 
 from main.utils import SidebarBaseTabs, SidebarBaseNavs
-from .estimators import FewInOneEstimator
+from .estimators import FewInOneEstimator, OneInOneEstimator
 
 
 class SidebarTestTabs(SidebarBaseTabs):
@@ -172,7 +172,10 @@ class TestControllerBase:
         return self.get_answers_list()[idx] or []
 
     def get_estimator(self):
-        return self.estimator_class(self)
+        if self.test.estimate_method == 'default':
+            return OneInOneEstimator(self)
+        elif self.test.estimate_method == 'many_answers':
+            return FewInOneEstimator(self)
 
     def estimate(self):
         estimator = self.get_estimator()

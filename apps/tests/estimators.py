@@ -70,3 +70,16 @@ class FewInOneEstimator(BaseEstimator):
                     if question[0] > 2:
                         score += 1
         return score
+
+
+class OneInOneEstimator(BaseEstimator):
+
+    def estimate(self):
+        score = 0
+        result = self.get_result()
+        for question in result.values():
+            if question[1] == question[2]:
+                if question[1] == question[0]:
+                    score += 1
+
+        return score
