@@ -164,14 +164,12 @@ class CompleteTestView(TestListBaseView):
     template_name = 'tests/completed_test.html'
 
     def dispatch(self, request, uuid, *args, **kwargs):
-        self.test = Test.get_test(uuid)
-        if not self.test:
-            raise Http404
+        self.test = get_object_or_404(
+            TestLog, test_uid=self.kwargs['uuid'])
         return super().dispatch(request, uuid, *args, **kwargs)
 
     def get_context_data(self, *args, **kwargs):
         ctx = super().get_context_data(*args, **kwargs)
         ctx['test'] = self.test
-        ctx['estimate'] = TestLog.objects.get(
-            test_uid=self.test.test_uid).score
+        ctx['estimate'] = self.test.score
         return ctx

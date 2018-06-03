@@ -1,6 +1,6 @@
 from django.db import models
 
-from tests.models import Test
+from tests.models import Test, TestLog
 
 
 class Question(models.Model):
@@ -15,3 +15,14 @@ class Question(models.Model):
 
     def __str__(self):
         return 'Вопрос #%s' % self.id
+
+
+class QuestionLog(models.Model):
+    test_log = models.ForeignKey(
+        TestLog, on_delete=models.CASCADE)
+    question = models.ForeignKey(
+        Question, on_delete=models.CASCADE)
+
+    class Meta:
+        verbose_name = 'Лог вопросов'
+        verbose_name_plural = 'Логи вопросов'

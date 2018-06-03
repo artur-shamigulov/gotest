@@ -3,9 +3,17 @@ from django.db.models import IntegerField, Case, When, Count, Sum, Q
 
 class BaseEstimator:
 
+    _result = None
+
     def __init__(self, test_controller):
         self.test_controller = test_controller
         self.test = self.test_controller.test
+
+    @property
+    def result(self):
+        if not self._result:
+            self._result = self.get_result()
+        return self._result
 
     def get_result(self):
 
@@ -57,7 +65,7 @@ class FewInOneEstimator(BaseEstimator):
 
     def estimate(self):
         score = 0
-        result = self.get_result()
+        result = self.result
         for question in result.values():
             if question[1] == question[2]:
 
@@ -76,7 +84,7 @@ class OneInOneEstimator(BaseEstimator):
 
     def estimate(self):
         score = 0
-        result = self.get_result()
+        result = self.result
         for question in result.values():
             if question[1] == question[2]:
                 if question[1] == question[0]:

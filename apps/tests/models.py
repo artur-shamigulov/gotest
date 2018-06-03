@@ -61,6 +61,7 @@ class Test(models.Model):
     def end_test(cls, test_uid):
         test = cls.get_test(test_uid)
         if test:
+            cls.clean_test(test_uid)
             return TestLog.objects.filter(test_uid=test_uid).update(
                 datetime_completed=timezone.now(),
                 score=test.estimate()
@@ -70,6 +71,11 @@ class Test(models.Model):
     @classmethod
     def get_test(cls, test_uid):
         return cache.get(
+            cls._get_test_name(test_uid))
+
+    @classmethod
+    def clean_test(cls, test_uid):
+        return cache.delete(
             cls._get_test_name(test_uid))
 
 
