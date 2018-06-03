@@ -4,7 +4,8 @@ from .views import (
     StatsSummaryByTestView, TestTableStatsAjaxView,
     ResultsDetailByTestView, StatsSumaryByUsersView,
     UserTableStatsAjaxView, ResultsDetailByUserView,
-    ResulultsDetailedOwnView, UserTestDetailedView)
+    ResulultsDetailedOwnView, UserTestDetailedView,
+    TestLogDetailedView)
 
 urlpatterns = [
     path(
@@ -39,4 +40,8 @@ urlpatterns = [
         'user-test-detailed/<int:id>/<int:test_id>',
         UserTestDetailedView.as_view(),
         name="user_test_detailed"),
+    path(
+        'test-log-detailed/<str:uuid>',
+        TestLogDetailedView.as_view(),
+        name="test_log_detailed"),
 ]

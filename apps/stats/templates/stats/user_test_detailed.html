@@ -37,6 +37,7 @@
 		        <td>{{ row.datetime_started }}</td>
 		        <td>{{ row.datetime_ended }}</td>
 		        <td>{{ row.score }}</td>
+		        <td><a href="{% url 'stats:test_log_detailed' row.uuid %}">Детально</a></td>
 		      </tr>
 		    {% endfor %}
 		  </tbody>
@@ -58,6 +59,7 @@
 		        <td>{{ row.datetime_started }}</td>
 		        <td>{{ row.datetime_ended }}</td>
 		        <td>{{ row.score }}</td>
+		        <td><a href="{% url 'stats:test_log_detailed' row.uuid %}">Детально</a></td>
 		      </tr>
 		    {% endfor %}
 		  </tbody>

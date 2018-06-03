@@ -1,0 +1,28 @@
+{% extends 'stats/base_static.html' %}
+{% load static %}
+{% block content_title %}
+	Детальная информация о тесте
+{% endblock content_title %}
+{% block stats_nav %}
+	{% if view.request.user.is_staff %}
+		{{ block.super }}
+	{% endif %}
+{% endblock stats_nav %}
+{% block stats_content %}
+	<div id="table_container">
+		<ul class="list-unstyled">
+			{% for question in view.get_test_log.questionlog_set.all %}
+			<li>
+				<strong>{{ question.question.text|safe }}</strong>
+				<ul>
+					{% for answer in question.answerlog_set.all %}
+						<li class="{% if answer.answer.is_true %}text-success{% else %}text-danger{% endif %}">{{ answer.answer.text|safe }}</li>
+					{% empty %}
+						<li class="text-muted">Нет ответа</li>
+					{% endfor %}
+				</ul>
+			</li>
+			{% endfor %}
+		</ul>
+	</div>
+{% endblock stats_content %}

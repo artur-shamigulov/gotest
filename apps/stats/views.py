@@ -4,6 +4,7 @@ from django.db.models import (
     Avg, Max, Case, When, IntegerField, Count, F, Q, Sum)
 from django.contrib.auth.models import User
 from django.urls import reverse_lazy
+from django.shortcuts import Http404
 
 from main.mixins import SidebarBaseMixin, NavBaseMixin
 
@@ -240,7 +241,8 @@ class UserTestDetailedView(LoginRequiredMixin,
                 datetime_started=F('testlog__datetime_created'),
                 datetime_ended=F('testlog__datetime_completed'),
                 score=F('testlog__score'),
-            )
+                uuid=F('testlog__test_uid'),
+            ).order_by('testlog__datetime_created')
 
         def available_list(self):
             return AvailableTest.objects.filter(
@@ -250,4 +252,28 @@ class UserTestDetailedView(LoginRequiredMixin,
                 datetime_started=F('testlog__datetime_created'),
                 datetime_ended=F('testlog__datetime_completed'),
                 score=F('testlog__score'),
-            )
+                uuid=F('testlog__test_uid'),
+            ).order_by('testlog__datetime_created')
+
+
+class TestLogDetailedView(
+        LoginRequiredMixin,
+        NavBaseMixin,
+        SidebarBaseMixin,
+        TemplateView):
+
+    template_name = 'stats/test_log_detailed.html'
+
+    def get_test_log(self):
+        test_log = TestLog.objects.filter(
+            test_uid=self.kwargs['uuid']
+        ).prefetch_related(
+            'questionlog_set', 'questionlog_set__answerlog_set',
+            'questionlog_set__question',
+            'questionlog_set__answerlog_set__answer')
+        if not self.request.user.has_perm('tests.can_read_stats'):
+            test_log = test_log.filter(user_id=self.request.user.id)
+        test_log = test_log.first()
+        if not test_log:
+            raise Http404
+        return test_log

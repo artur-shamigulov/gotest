@@ -37,6 +37,10 @@ class Test(models.Model):
     def __str__(self):
         return self.title
 
+    @classmethod
+    def set_logger(cls, logger):
+        cls.logger = logger
+
     @staticmethod
     def _get_test_name(uid):
         return'test_%s' % uid
@@ -62,11 +66,8 @@ class Test(models.Model):
         test = cls.get_test(test_uid)
         if test:
             cls.clean_test(test_uid)
-            return TestLog.objects.filter(test_uid=test_uid).update(
-                datetime_completed=timezone.now(),
-                score=test.estimate()
-            )
-        return TestNotFound()
+            cls.logger.write_log(test.get_estimator(), test_uid)
+            return True
 
     @classmethod
     def get_test(cls, test_uid):
@@ -171,4 +172,4 @@ class TestLog(models.Model):
         )
 
     def __str__(self):
-        return '%s %s %s' % self.test.title, self.user.username, self.score
+        return '%s %s %s' % (self.test.title, self.user.username, self.score)

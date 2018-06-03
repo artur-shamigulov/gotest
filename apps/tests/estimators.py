@@ -17,9 +17,9 @@ class BaseEstimator:
 
     def get_result(self):
 
-        answers_ids = []
+        self.answers_ids = []
         for idx, question in enumerate(self.test_controller):
-            answers_ids += self.test_controller.get_answer_by_idx(idx)
+            self.answers_ids += self.test_controller.get_answer_by_idx(idx)
 
         result = dict([
             (item['id'], [item['true_count'], item['right_count']])
@@ -37,7 +37,7 @@ class BaseEstimator:
                 right_count=Sum(
                     Case(
                         When(
-                            Q(answer__in=answers_ids) & Q(answer__is_true=True),
+                            Q(answer__in=self.answers_ids) & Q(answer__is_true=True),
                             then=1
                         ),
                         default=0,

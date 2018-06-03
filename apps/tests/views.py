@@ -111,7 +111,13 @@ class TestView(
     def dispatch(self, request, uuid, page, *args, **kwargs):
         self.test = Test.get_test(uuid)
         if not self.test:
-            raise Http404
+            return HttpResponseRedirect(
+                reverse_lazy(
+                    'tests:complete_test',
+                    kwargs={
+                        'uuid': uuid}
+                )
+            )
 
         self.question = self.test.set_current_question(page - 1)
         if isinstance(self.question, (NoQuestionBase,)):
