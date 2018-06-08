@@ -5,7 +5,7 @@
             <div class="card box-shadow">
                 <div class="card-body">
                     <h5 class="card-title">{{ test.title }}</h5>
-                    <p class="card-text">{{ test.description }}</p>
+                    <p class="card-text">{{ test.description|truncatewords:10 }}</p>
                     <a href="{% url 'tests:start_available_test' test.slug %}" class="btn btn-primary">Тренировка</a>
                 </div>
             </div>

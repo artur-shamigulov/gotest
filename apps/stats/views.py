@@ -236,7 +236,7 @@ class UserTestDetailedView(LoginRequiredMixin,
         def appointed_list(self):
             return AppointedTest.objects.filter(
                 tests=self.kwargs['test_id'],
-                users=self.get_user_id()
+                testlog__user=self.get_user_id()
             ).annotate(
                 datetime_started=F('testlog__datetime_created'),
                 datetime_ended=F('testlog__datetime_completed'),
@@ -247,7 +247,7 @@ class UserTestDetailedView(LoginRequiredMixin,
         def available_list(self):
             return AvailableTest.objects.filter(
                 tests=self.kwargs['test_id'],
-                users=self.get_user_id()
+                testlog__user=self.get_user_id()
             ).annotate(
                 datetime_started=F('testlog__datetime_created'),
                 datetime_ended=F('testlog__datetime_completed'),

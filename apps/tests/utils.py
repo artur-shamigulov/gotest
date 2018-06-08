@@ -47,7 +47,7 @@ class SidebarTestNavs(SidebarBaseNavs):
 class SidebarStaffNavs(SidebarBaseNavs):
     navs_list = [
         {
-            'title': 'Админ панель',
+            'title': 'Административная панель',
             'url': reverse_lazy('admin:index'),
         },
     ]

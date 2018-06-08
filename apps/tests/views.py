@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from django.http import Http404, HttpResponseRedirect
 from django.views.generic import TemplateView, RedirectView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import F
 
 from main.mixins import SidebarBaseMixin, NavBaseMixin
 
@@ -41,7 +42,8 @@ class ApointedTestListView(TestListBaseView):
     @staticmethod
     def get_test(user):
         return AppointedTest.objects.future(
-            users=user).prefetch_related('tests')
+            users=user).exclude(
+            testlog__user=user).prefetch_related('tests')
 
 
 class AvailableTestListView(TestListBaseView):
@@ -83,7 +85,10 @@ class StartAppointedTestView(
         test = get_object_or_404(Test, slug=slug)
 
         appointed_test = get_list_or_404(
-            AppointedTest, users=self.request.user, tests=test
+            AppointedTest.objects.exclude(
+                testlog__user=self.request.user),
+            users=self.request.user,
+            tests=test
         )[0]
 
         test_log = test.start_test(
