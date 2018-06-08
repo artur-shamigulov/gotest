@@ -3,7 +3,6 @@ from django.urls import reverse_lazy
 from django.http import Http404, HttpResponseRedirect
 from django.views.generic import TemplateView, RedirectView, FormView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import F
 
 from main.mixins import SidebarBaseMixin, NavBaseMixin
 
@@ -69,9 +68,8 @@ class StartAvailableTestView(
 
         test_log = test.start_test(
             self.request.user,
-            duration=available_test.duration, length=available_test.test_size)
-        test_log.available_test = available_test
-        test_log.save()
+            duration=available_test.duration, length=available_test.test_size,
+            available_test=available_test)
         return reverse_lazy(
             'tests:test',
             kwargs={'uuid': test_log.test_uid, 'page': 1})
@@ -93,9 +91,8 @@ class StartAppointedTestView(
 
         test_log = test.start_test(
             self.request.user,
-            duration=appointed_test.duration, length=appointed_test.test_size)
-        test_log.appointed_test = appointed_test
-        test_log.save()
+            duration=appointed_test.duration, length=appointed_test.test_size,
+            appointed_test=appointed_test)
         return reverse_lazy(
             'tests:test',
             kwargs={'uuid': test_log.test_uid, 'page': 1})

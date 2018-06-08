@@ -4,7 +4,7 @@ from django.utils.safestring import mark_safe
 from django.urls import reverse_lazy
 
 from .models import (
-    Test, AppointedTest, AvailableTest)
+    Test, AppointedTest, AvailableTest, TestKlassDepence)
 from .forms import (
     TestAdminForm, ApointedTestFrom, AvailableTestFrom)
 from .parserDoc import get_full_text
@@ -16,7 +16,7 @@ from answers.models import Answer
 class QuestionInline(admin.StackedInline):
     extra = 0
     model = Question
-    exclude = ('text',)
+    exclude = ('text', 'points_amount', 'klass')
 
     readonly_fields = ('question_text',)
 
@@ -57,7 +57,9 @@ class TestAdmin(admin.ModelAdmin):
             for question in question_list:
                 instance = Question.objects.create(
                     test=obj,
-                    text=question['text']
+                    text=question['text'],
+                    klass=question['klass'],
+                    points_amount=question['points_amount'],
                 )
                 answers = []
                 for answer in question['answers']:
@@ -72,9 +74,27 @@ class TestAdmin(admin.ModelAdmin):
 admin.site.register(Test, TestAdmin)
 
 
+class TestKlassDepenceInline(admin.StackedInline):
+    extra = 0
+    model = TestKlassDepence
+    exclude = ('appointed_test', 'available_test')
+
+
+class TestKlassDepenceAppointedInline(TestKlassDepenceInline):
+    exclude = ('available_test',)
+
+
+class TestKlassDepenceAvailableInline(TestKlassDepenceInline):
+    exclude = ('appointed_test',)
+
+
 class AppointedTestAdmin(admin.ModelAdmin):
 
     form = ApointedTestFrom
+
+    inlines = [
+        TestKlassDepenceAppointedInline,
+    ]
 
 
 admin.site.register(AppointedTest, AppointedTestAdmin)
@@ -82,6 +102,10 @@ admin.site.register(AppointedTest, AppointedTestAdmin)
 
 class AvailableTestAdmin(admin.ModelAdmin):
     form = AvailableTestFrom
+
+    inlines = [
+        TestKlassDepenceAvailableInline,
+    ]
 
 
 admin.site.register(AvailableTest, AvailableTestAdmin)

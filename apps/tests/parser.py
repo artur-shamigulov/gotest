@@ -10,11 +10,15 @@ class TestParser(HTMLParser):
         self.current_question = None
         self.text = ''
         self.is_true = False
+        self.klass = None
+        self.points_amount = 1
         HTMLParser.__init__(self, *args, **kwargs)
 
     def start_question(self):
         self.current_question = {
             'text': '',
+            'klass': self.klass,
+            'points_amount': self.points_amount,
             'answers': []
         }
 
@@ -23,6 +27,9 @@ class TestParser(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         if tag == 'question':
+            attrs = dict(attrs)
+            self.klass = attrs.get('klass', '""')[1:-1]
+            self.points_amount = attrs.get('points_amount', '"1"')[1:-1]
             self.start_question()
             self.text = ''
 
@@ -37,7 +44,7 @@ class TestParser(HTMLParser):
         if tag == "answer":
             self.current_question['answers'].append({
                 'text': self.text,
-                'is_true': self.is_true
+                'is_true': self.is_true,
             })
             self.is_true = False
 

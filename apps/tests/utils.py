@@ -1,5 +1,6 @@
 from django.urls import reverse_lazy
 from django.core.cache import cache
+import random
 
 from main.utils import SidebarBaseTabs, SidebarBaseNavs
 from .estimators import FewInOneEstimator, OneInOneEstimator
@@ -192,6 +193,44 @@ class TestControllerRandom(TestControllerBase):
         self.set_question_list(list(self.test.question_set.all(
         ).order_by('?')[:self.length].values_list(
             'id', flat=True)))
+
+    def _get_question(self, idx):
+        if len(self.get_question_list()) <= idx:
+            return self.non_question_class()
+
+        return self.test.question_set.filter(
+            id=self.get_question_list()[idx]).prefetch_related(
+            'answer_set').first() or self.non_question_class()
+
+
+class TestControllerKlass(TestControllerBase):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._init_questions()
+
+    def _init_questions(self):
+        test_log = self.test.testlog_set.get(test_uid=self.test_uid)
+        if test_log.appointed_test_id:
+            dependencies = test_log.appointed_test.testklassdepence_set.all()
+        else:
+            dependencies = test_log.available_test.testklassdepence_set.all()
+
+        questions_list = []
+
+        for klass_dependence in dependencies:
+            questions_list += list(
+                self.test.question_set.filter(
+                    klass=klass_dependence.klass
+                ).order_by('?')[:klass_dependence.count].values_list(
+                    'id', flat=True))
+        if len(questions_list) < self.length:
+            questions_list += list(self.test.question_set.exclude(
+                id__in=questions_list
+            ).order_by('?')[:self.length - len(questions_list)].values_list(
+                'id', flat=True))
+        random.shuffle(questions_list)
+        self.set_question_list(questions_list)
 
     def _get_question(self, idx):
         if len(self.get_question_list()) <= idx:

@@ -9,7 +9,7 @@ from django.contrib.auth.models import User
 
 from courses.models import Course
 
-from .utils import TestControllerRandom
+from .utils import TestControllerRandom, TestControllerKlass
 
 
 class TestNotFound(object):
@@ -46,12 +46,14 @@ class Test(models.Model):
         return'test_%s' % uid
 
     def _get_test_controller(self, id, uid, length, duration):
+        return TestControllerKlass(id, uid, length, self, duration)
         return TestControllerRandom(id, uid, length, self, duration)
 
-    def start_test(self, user, duration, length):
+    def start_test(self, user, duration, length, **kwargs):
         test_log = TestLog.objects.create(
             test=self, user=user,
-            datetime_completed=timezone.now() + timedelta(minutes=60))
+            datetime_completed=timezone.now() + timedelta(minutes=60),
+            **kwargs)
 
         cache.set(
             self._get_test_name(test_log.test_uid),
@@ -172,3 +174,23 @@ class TestLog(models.Model):
 
     def __str__(self):
         return '%s %s %s' % (self.test.title, self.user.username, self.score)
+
+
+class TestKlassDepence(models.Model):
+
+    klass = models.CharField('Класс вопроса',
+                             max_length=255,
+                             null=True,
+                             blank=True)
+    count = models.PositiveSmallIntegerField(default=0)
+
+    appointed_test = models.ForeignKey(
+        AppointedTest, verbose_name="Назначение",
+        on_delete=models.CASCADE, blank=True, null=True)
+    available_test = models.ForeignKey(
+        AvailableTest, verbose_name="Доступ",
+        on_delete=models.CASCADE, blank=True, null=True)
+
+    class Meta:
+        verbose_name = 'Класс вопроса'
+        verbose_name_plural = 'Классы вопросов'
