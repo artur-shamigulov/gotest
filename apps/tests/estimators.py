@@ -22,7 +22,7 @@ class BaseEstimator:
             self.answers_ids += self.test_controller.get_answer_by_idx(idx)
 
         result = dict([
-            (item['id'], [item['true_count'], item['right_count']])
+            (item['id'], [item['true_count'], item['right_count'], item['points_amount']])
             for item in self.test.question_set.filter(
                 id__in=self.test_controller.get_question_list(),
             ).order_by('id').annotate(
@@ -44,7 +44,7 @@ class BaseEstimator:
                         output_field=IntegerField()
                     )
                 )
-            ).values('id', 'true_count', 'right_count')
+            ).values('id', 'true_count', 'right_count', 'points_amount')
         ])
 
         for idx in range(self.test_controller.length):
@@ -67,7 +67,7 @@ class FewInOneEstimator(BaseEstimator):
         score = 0
         result = self.result
         for question in result.values():
-            if question[1] == question[2]:
+            if question[1] == question[3]:
 
                 if question[1] == question[0]:
                     if question[0] < 3:
@@ -86,8 +86,21 @@ class OneInOneEstimator(BaseEstimator):
         score = 0
         result = self.result
         for question in result.values():
-            if question[1] == question[2]:
+            if question[1] == question[3]:
                 if question[1] == question[0]:
                     score += 1
+
+        return score
+
+
+class KlassDepenceEstimator(BaseEstimator):
+
+    def estimate(self):
+        score = 0
+        result = self.result
+        for question in result.values():
+            if question[1] == question[3]:
+                if question[1] == question[0]:
+                    score += question[2]
 
         return score

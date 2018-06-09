@@ -3,7 +3,7 @@ from django.core.cache import cache
 import random
 
 from main.utils import SidebarBaseTabs, SidebarBaseNavs
-from .estimators import FewInOneEstimator, OneInOneEstimator
+from .estimators import FewInOneEstimator, OneInOneEstimator, KlassDepenceEstimator
 
 
 class SidebarTestTabs(SidebarBaseTabs):
@@ -177,6 +177,8 @@ class TestControllerBase:
             return OneInOneEstimator(self)
         elif self.test.estimate_method == 'many_answers':
             return FewInOneEstimator(self)
+        elif self.test.estimate_method == 'klass_depence':
+            return KlassDepenceEstimator(self)
 
     def estimate(self):
         estimator = self.get_estimator()

@@ -21,6 +21,7 @@ class Test(models.Model):
     ESTIMATE_METHODS = (
         ('default', 'Стандартный'),
         ('many_answers', 'Множество ответов'),
+        ('klass_depence', 'Классовый подбор')
     )
 
     course = models.ManyToManyField(Course)
@@ -46,7 +47,8 @@ class Test(models.Model):
         return'test_%s' % uid
 
     def _get_test_controller(self, id, uid, length, duration):
-        return TestControllerKlass(id, uid, length, self, duration)
+        if self.estimate_method == 'klass_depence':
+            return TestControllerKlass(id, uid, length, self, duration)
         return TestControllerRandom(id, uid, length, self, duration)
 
     def start_test(self, user, duration, length, **kwargs):
