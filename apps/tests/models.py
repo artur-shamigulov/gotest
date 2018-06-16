@@ -101,6 +101,33 @@ class AppointedTestManager(models.Manager):
         return AppointedTestQuerySet(self.model, using=self._db)
 
 
+class TestKlassDepence(models.Model):
+
+    title = models.CharField(
+        'Заголовок', max_length=255)
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = 'Настройка классов теста'
+        verbose_name_plural = 'Настройки классов теста'
+
+
+class TestKlassDepenceItem(models.Model):
+
+    test_klass_depence = models.ForeignKey(
+        TestKlassDepence,
+        verbose_name='Настройка классов теста',
+        on_delete=models.CASCADE)
+
+    klass = models.CharField('Класс вопроса',
+                             max_length=255,
+                             null=True,
+                             blank=True)
+    count = models.PositiveSmallIntegerField(default=0)
+
+
 class AppointedTest(models.Model):
 
     title = models.CharField(
@@ -112,6 +139,10 @@ class AppointedTest(models.Model):
         'Количество вопросов', default=25)
     datetime_start = models.DateTimeField('Начало теста')
     datetime_end = models.DateTimeField('Окончание теста')
+    test_klass_depence = models.ForeignKey(
+        TestKlassDepence,
+        verbose_name='Настройка классов теста',
+        on_delete=models.CASCADE, blank=True, null=True)
 
     objects = AppointedTestManager()
 
@@ -141,6 +172,10 @@ class AvailableTest(models.Model):
     duration = models.PositiveSmallIntegerField('Длительность', default=60)
     test_size = models.PositiveSmallIntegerField(
         'Количество вопросов', default=25)
+    test_klass_depence = models.ForeignKey(
+        TestKlassDepence,
+        verbose_name='Настройка классов теста',
+        on_delete=models.CASCADE, blank=True, null=True)
 
     class Meta:
         verbose_name = 'Доступный тест'
@@ -177,22 +212,3 @@ class TestLog(models.Model):
     def __str__(self):
         return '%s %s %s' % (self.test.title, self.user.username, self.score)
 
-
-class TestKlassDepence(models.Model):
-
-    klass = models.CharField('Класс вопроса',
-                             max_length=255,
-                             null=True,
-                             blank=True)
-    count = models.PositiveSmallIntegerField(default=0)
-
-    appointed_test = models.ForeignKey(
-        AppointedTest, verbose_name="Назначение",
-        on_delete=models.CASCADE, blank=True, null=True)
-    available_test = models.ForeignKey(
-        AvailableTest, verbose_name="Доступ",
-        on_delete=models.CASCADE, blank=True, null=True)
-
-    class Meta:
-        verbose_name = 'Класс вопроса'
-        verbose_name_plural = 'Классы вопросов'

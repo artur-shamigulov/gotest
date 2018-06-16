@@ -4,7 +4,8 @@ from django.utils.safestring import mark_safe
 from django.urls import reverse_lazy
 
 from .models import (
-    Test, AppointedTest, AvailableTest, TestKlassDepence)
+    Test, AppointedTest, AvailableTest, TestKlassDepence,
+    TestKlassDepenceItem)
 from .forms import (
     TestAdminForm, ApointedTestFrom, AvailableTestFrom)
 from .parserDoc import get_full_text
@@ -74,27 +75,20 @@ class TestAdmin(admin.ModelAdmin):
 admin.site.register(Test, TestAdmin)
 
 
-class TestKlassDepenceInline(admin.StackedInline):
+class TestKlassDepenceItemInline(admin.StackedInline):
     extra = 0
-    model = TestKlassDepence
-    exclude = ('appointed_test', 'available_test')
+    model = TestKlassDepenceItem
 
 
-class TestKlassDepenceAppointedInline(TestKlassDepenceInline):
-    exclude = ('available_test',)
+@admin.register(TestKlassDepence)
+class TestKlassDepenceAdmin(admin.ModelAdmin):
 
-
-class TestKlassDepenceAvailableInline(TestKlassDepenceInline):
-    exclude = ('appointed_test',)
+    inlines = (TestKlassDepenceItemInline,)
 
 
 class AppointedTestAdmin(admin.ModelAdmin):
 
     form = ApointedTestFrom
-
-    inlines = [
-        TestKlassDepenceAppointedInline,
-    ]
 
 
 admin.site.register(AppointedTest, AppointedTestAdmin)
@@ -102,10 +96,6 @@ admin.site.register(AppointedTest, AppointedTestAdmin)
 
 class AvailableTestAdmin(admin.ModelAdmin):
     form = AvailableTestFrom
-
-    inlines = [
-        TestKlassDepenceAvailableInline,
-    ]
 
 
 admin.site.register(AvailableTest, AvailableTestAdmin)

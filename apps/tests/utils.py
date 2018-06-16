@@ -214,9 +214,9 @@ class TestControllerKlass(TestControllerBase):
     def _init_questions(self):
         test_log = self.test.testlog_set.get(test_uid=self.test_uid)
         if test_log.appointed_test_id:
-            dependencies = test_log.appointed_test.testklassdepence_set.all()
+            dependencies = test_log.appointed_test.test_klass_depence.testklassdepenceitem_set.all()
         else:
-            dependencies = test_log.available_test.testklassdepence_set.all()
+            dependencies = test_log.available_test.test_klass_depence.testklassdepenceitem_set.all()
 
         questions_list = []
 

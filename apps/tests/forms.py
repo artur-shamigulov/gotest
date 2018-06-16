@@ -69,7 +69,8 @@ class ApointedTestFrom(ApointedAvailableTestFrom):
         model = AppointedTest
         fields = (
             'title', 'groups', 'users',
-            'tests', 'duration', 'test_size',
+            'tests', 'test_klass_depence',
+            'duration', 'test_size',
             'datetime_start',
             'datetime_end')
         widgets = {
@@ -84,4 +85,4 @@ class AvailableTestFrom(ApointedAvailableTestFrom):
         model = AppointedTest
         fields = (
             'title', 'groups', 'users',
-            'tests', 'test_size',)
+            'tests', 'test_klass_depence', 'test_size',)
